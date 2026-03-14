@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Weekly Work Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #f7f6f3;
+    --surface: #ffffff;
+    --surface2: #f0ede8;
+    --border: rgba(0,0,0,0.10);
+    --border-mid: rgba(0,0,0,0.18);
+    --text: #1a1917;
+    --text-2: #6b6860;
+    --text-3: #a8a49e;
+    --green: #1a7a56;
+    --green-bg: #e8f5ef;
+    --blue: #1a5fa8;
+    --blue-bg: #e8f0fb;
+    --red: #b83232;
+    --red-bg: #fbeaea;
+    --amber: #9a6200;
+    --amber-bg: #fef3db;
+    --purple: #6b3fa0;
+    --purple-bg: #f0eafa;
+    --grey: #6b6860;
+    --info-bg: #edf3fc;
+    --info-text: #1a5fa8;
+    --info-border: rgba(26,95,168,0.25);
+    --radius: 10px;
+    --radius-sm: 6px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.07);
+  }
+  [data-theme="dark"] {
+    --bg: #141312;
+    --surface: #1e1d1b;
+    --surface2: #272523;
+    --border: rgba(255,255,255,0.09);
+    --border-mid: rgba(255,255,255,0.15);
+    --text: #f0ede8;
+    --text-2: #9e9a94;
+    --text-3: #5c5955;
+    --green: #3ecf8e;
+    --green-bg: #0e2a1e;
+    --blue: #5b9cf6;
+    --blue-bg: #0d1f3c;
+    --red: #f07070;
+    --red-bg: #2d1212;
+    --amber: #f0b429;
+    --amber-bg: #2a1f05;
+    --purple: #b07ef5;
+    --purple-bg: #1e1030;
+    --grey: #9e9a94;
+    --info-bg: #0d1f3c;
+    --info-text: #5b9cf6;
+    --info-border: rgba(91,156,246,0.25);
+    --shadow: 0 1px 4px rgba(0,0,0,0.3);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; line-height: 1.6; transition: background 0.2s, color 0.2s; }
+  .app { max-width: 980px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+  .app-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 10px; }
+  .app-title { font-size: 18px; font-weight: 500; letter-spacing: -0.02em; }
+  .header-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+  .btn { background: var(--surface); border: 0.5px solid var(--border-mid); border-radius: var(--radius-sm); padding: 6px 12px; font-size: 13px; font-family: 'DM Sans', sans-serif; color: var(--text-2); cursor: pointer; transition: background 0.15s, color 0.15s; }
+  .btn:hover { background: var(--surface2); color: var(--text); }
+  .btn-primary { background: var(--text); color: var(--bg); border-color: transparent; }
+  .btn-primary:hover { opacity: 0.85; background: var(--text); color: var(--bg); }
+  .btn-sm { padding: 4px 9px; font-size: 12px; }
+  .btn-icon { padding: 6px 9px; line-height: 1; }
+
+  .week-nav { display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem; }
+  .week-label { font-size: 14px; font-weight: 500; color: var(--text); min-width: 220px; }
+
+  .carry-banner { background: var(--info-bg); border: 0.5px solid var(--info-border); border-radius: var(--radius-sm); padding: 9px 14px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; font-size: 13px; color: var(--info-text); gap: 10px; }
+  .carry-banner button { background: none; border: 0.5px solid var(--info-border); border-radius: var(--radius-sm); padding: 3px 10px; font-size: 12px; color: var(--info-text); cursor: pointer; font-family: 'DM Sans', sans-serif; white-space: nowrap; }
+  .carry-banner button:hover { background: rgba(91,156,246,0.1); }
+
+  .totals { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 8px; margin-bottom: 14px; }
+  .total-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; box-shadow: var(--shadow); }
+  .total-label { font-size: 11px; color: var(--text-2); display: flex; align-items: center; gap: 5px; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .dot-doing { background: var(--green); }
+  .dot-planned { background: var(--blue); }
+  .dot-blocked { background: var(--red); }
+  .dot-done { background: var(--grey); }
+  .dot-cancelled { background: var(--amber); }
+  .total-num { font-size: 20px; font-weight: 500; font-family: 'DM Mono', monospace; }
+
+  .columns { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; margin-bottom: 10px; }
+  .col { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 14px; box-shadow: var(--shadow); }
+  .col-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .col-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .cdoing { background: var(--green); }
+  .cplanned { background: var(--blue); }
+  .cblocked { background: var(--red); }
+  .cdone { background: var(--grey); }
+  .ccancelled { background: var(--amber); }
+  .col-title { font-size: 13px; font-weight: 500; color: var(--text); }
+  .col-sub { font-size: 11px; color: var(--text-3); }
+
+  .items { display: flex; flex-direction: column; gap: 5px; min-height: 40px; }
+  .empty { font-size: 12px; color: var(--text-3); padding: 6px 0; font-style: italic; }
+
+  .item { background: var(--surface2); border-radius: var(--radius-sm); padding: 7px 9px; border-left: 2.5px solid transparent; }
+  .item-doing { border-color: var(--green); }
+  .item-planned { border-color: var(--blue); }
+  .item-blocked { border-color: var(--red); }
+  .item-done-s { border-color: var(--grey); opacity: 0.6; }
+  .item-cancelled-s { border-color: var(--amber); opacity: 0.65; }
+
+  .item-top { display: flex; align-items: flex-start; gap: 6px; }
+  .item-text { font-size: 13px; color: var(--text); flex: 1; line-height: 1.45; word-break: break-word; }
+  .struck { text-decoration: line-through; color: var(--text-3); }
+  .cancelled-text { text-decoration: line-through; color: var(--amber); }
+
+  .tag { font-size: 10px; border-radius: 4px; padding: 1px 5px; margin-left: 4px; vertical-align: middle; white-space: nowrap; display: inline-block; }
+  .tag-carried { background: var(--blue-bg); color: var(--blue); }
+  .tag-ongoing { background: var(--purple-bg); color: var(--purple); }
+  .tag-cancelled-label { background: var(--amber-bg); color: var(--amber); }
+
+  .item-btns { display: flex; gap: 2px; flex-shrink: 0; }
+  .ibt { background: none; border: none; cursor: pointer; color: var(--text-3); font-size: 13px; padding: 1px 3px; line-height: 1; font-family: 'DM Sans', sans-serif; border-radius: 4px; transition: color 0.1s, background 0.1s; }
+  .ibt:hover { color: var(--text); background: rgba(128,128,128,0.1); }
+  .ibt.del:hover { color: var(--red); }
+  .ibt.tick:hover { color: var(--green); }
+  .ibt.xbtn:hover { color: var(--amber); }
+
+  .item-note-view { font-size: 12px; color: var(--text-2); margin-top: 5px; padding-top: 5px; border-top: 0.5px solid var(--border); line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
+  .item-note-edit { width: 100%; margin-top: 5px; font-size: 12px; border: 0.5px solid var(--border-mid); border-radius: var(--radius-sm); padding: 5px 8px; background: var(--surface); color: var(--text); resize: vertical; min-height: 50px; font-family: 'DM Sans', sans-serif; outline: none; }
+  .item-note-edit:focus { border-color: var(--blue); }
+  .note-save { font-size: 11px; margin-top: 4px; padding: 3px 8px; background: none; border: 0.5px solid var(--border-mid); border-radius: var(--radius-sm); cursor: pointer; color: var(--text-2); font-family: 'DM Sans', sans-serif; }
+  .note-save:hover { background: var(--surface2); }
+
+  .add-row { display: flex; gap: 5px; margin-top: 8px; }
+  .add-in { flex: 1; font-size: 13px; border: 0.5px solid var(--border-mid); border-radius: var(--radius-sm); padding: 5px 9px; background: var(--surface); color: var(--text); font-family: 'DM Sans', sans-serif; outline: none; }
+  .add-in:focus { border-color: var(--blue); }
+  .add-btn { background: var(--surface2); border: 0.5px solid var(--border-mid); border-radius: var(--radius-sm); padding: 5px 10px; cursor: pointer; font-size: 15px; color: var(--text-2); }
+  .add-btn:hover { background: var(--surface); color: var(--text); }
+
+  .lower-section { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 14px; box-shadow: var(--shadow); margin-bottom: 10px; }
+  .section-head { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
+  .section-toggle { font-size: 10px; color: var(--text-3); margin-left: auto; }
+  .section-clear { font-size: 11px; color: var(--text-3); cursor: pointer; padding: 2px 6px; border-radius: 4px; }
+  .section-clear:hover { color: var(--red); background: var(--red-bg); }
+  .section-body { margin-top: 10px; }
+
+  .hint-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; }
+  .hint { font-size: 11px; color: var(--text-3); display: flex; align-items: center; gap: 5px; }
+
+  .summary-box { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 14px; box-shadow: var(--shadow); }
+  .summary-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .summary-label { font-size: 12px; font-weight: 500; color: var(--text-2); letter-spacing: 0.04em; text-transform: uppercase; }
+  .summary-text { font-size: 12px; font-family: 'DM Mono', monospace; color: var(--text); white-space: pre-wrap; line-height: 1.75; }
+
+  .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 100; align-items: center; justify-content: center; }
+  .modal-bg.open { display: flex; }
+  .modal { background: var(--surface); border: 0.5px solid var(--border-mid); border-radius: var(--radius); padding: 20px; width: 460px; max-width: 95vw; }
+  .modal-title { font-size: 15px; font-weight: 500; margin-bottom: 4px; color: var(--text); }
+  .modal-sub { font-size: 12px; color: var(--text-3); margin-bottom: 12px; }
+  .modal textarea { width: 100%; height: 140px; font-size: 12px; font-family: 'DM Mono', monospace; border: 0.5px solid var(--border-mid); border-radius: var(--radius-sm); padding: 8px; background: var(--surface2); color: var(--text); resize: vertical; outline: none; }
+  .modal-actions { display: flex; gap: 8px; margin-top: 12px; justify-content: flex-end; }
+
+  .copy-ok { font-size: 12px; color: var(--green); margin-left: 8px; opacity: 0; transition: opacity 0.3s; }
+  .copy-ok.show { opacity: 1; }
+
+  @media (max-width: 660px) {
+    .columns { grid-template-columns: 1fr; }
+    .totals { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="app-header">
+    <div class="app-title">Weekly tracker</div>
+    <div class="header-actions">
+      <button class="btn btn-sm" onclick="exportData()">Export JSON</button>
+      <button class="btn btn-sm" onclick="openImport()">Import JSON</button>
+      <button class="btn btn-sm btn-icon" onclick="toggleTheme()" title="Toggle dark mode">&#9788;</button>
+    </div>
+  </div>
+
+  <div class="week-nav">
+    <button class="btn btn-icon" onclick="changeWeek(-1)">&#8592;</button>
+    <span class="week-label" id="week-label"></span>
+    <button class="btn btn-icon" onclick="changeWeek(1)">&#8594;</button>
+  </div>
+
+  <div id="carry-banner" style="display:none;" class="carry-banner">
+    <span id="carry-msg"></span>
+    <button onclick="carryOver()">Carry incomplete tasks to this week</button>
+  </div>
+
+  <div class="totals">
+    <div class="total-card"><div class="total-label"><div class="dot dot-doing"></div>In progress</div><div class="total-num" id="cnt-doing">0</div></div>
+    <div class="total-card"><div class="total-label"><div class="dot dot-planned"></div>Planned</div><div class="total-num" id="cnt-planned">0</div></div>
+    <div class="total-card"><div class="total-label"><div class="dot dot-blocked"></div>Blocked</div><div class="total-num" id="cnt-blocked">0</div></div>
+    <div class="total-card"><div class="total-label"><div class="dot dot-done"></div>Completed</div><div class="total-num" id="cnt-done">0</div></div>
+    <div class="total-card"><div class="total-label"><div class="dot dot-cancelled"></div>Cancelled</div><div class="total-num" id="cnt-cancelled">0</div></div>
+  </div>
+
+  <div class="hint-row">
+    <span class="hint">&#10003; = complete</span>
+    <span class="hint">&#10007; = cancel</span>
+    <span class="hint">&#9671; = mark ongoing (auto carry-over each week)</span>
+    <span class="hint">&#43;&#9650; = add note</span>
+  </div>
+
+  <div class="columns">
+    <div class="col">
+      <div class="col-head"><div class="col-dot cdoing"></div><div><div class="col-title">In progress</div><div class="col-sub">What I'm working on now</div></div></div>
+      <div class="items" id="list-doing"></div>
+      <div class="add-row"><input class="add-in" id="in-doing" placeholder="Add task…" onkeydown="if(event.key==='Enter')addItem('doing')" /><button class="add-btn" onclick="addItem('doing')">+</button></div>
+    </div>
+    <div class="col">
+      <div class="col-head"><div class="col-dot cplanned"></div><div><div class="col-title">Planned</div><div class="col-sub">Coming up this week</div></div></div>
+      <div class="items" id="list-planned"></div>
+      <div class="add-row"><input class="add-in" id="in-planned" placeholder="Add task…" onkeydown="if(event.key==='Enter')addItem('planned')" /><button class="add-btn" onclick="addItem('planned')">+</button></div>
+    </div>
+    <div class="col">
+      <div class="col-head"><div class="col-dot cblocked"></div><div><div class="col-title">Blocked</div><div class="col-sub">Use notes to explain the blocker</div></div></div>
+      <div class="items" id="list-blocked"></div>
+      <div class="add-row"><input class="add-in" id="in-blocked" placeholder="Add blocker…" onkeydown="if(event.key==='Enter')addItem('blocked')" /><button class="add-btn" onclick="addItem('blocked')">+</button></div>
+    </div>
+  </div>
+
+  <div class="lower-section">
+    <div class="section-head" onclick="toggleSection('done')">
+      <div class="col-dot cdone"></div>
+      <div><div class="col-title">Completed</div><div class="col-sub">Finished this week</div></div>
+      <span class="section-clear" onclick="event.stopPropagation();clearSection('done')" title="Remove all completed">Clear all</span>
+      <span class="section-toggle" id="tog-done">&#9660;</span>
+    </div>
+    <div class="section-body" id="body-done">
+      <div class="items" id="list-done"></div>
+    </div>
+  </div>
+
+  <div class="lower-section">
+    <div class="section-head" onclick="toggleSection('cancelled')">
+      <div class="col-dot ccancelled"></div>
+      <div><div class="col-title">Cancelled</div><div class="col-sub">Tasks dropped or outside your control</div></div>
+      <span class="section-clear" onclick="event.stopPropagation();clearSection('cancelled')" title="Remove all cancelled">Clear all</span>
+      <span class="section-toggle" id="tog-cancelled">&#9660;</span>
+    </div>
+    <div class="section-body" id="body-cancelled">
+      <div class="items" id="list-cancelled"></div>
+    </div>
+  </div>
+
+  <div class="summary-box">
+    <div class="summary-head">
+      <span class="summary-label">Manager update</span>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <button class="btn btn-sm" onclick="copyUpdate()">Copy update</button>
+        <span class="copy-ok" id="copy-ok">Copied!</span>
+      </div>
+    </div>
+    <div class="summary-text" id="summary"></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="import-modal">
+  <div class="modal">
+    <div class="modal-title">Import JSON</div>
+    <div class="modal-sub">Paste a previously exported JSON file to restore your data.</div>
+    <textarea id="import-ta" placeholder="Paste exported JSON here…"></textarea>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeImport()">Cancel</button>
+      <button class="btn btn-primary" onclick="doImport()">Import</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const weeks = {};
+let currentKey = '';
+let weekOffset = 0;
+const sectionOpen = { done: true, cancelled: true };
+const editing = {};
+
+function save() {
+  try { localStorage.setItem('wt3_data', JSON.stringify({ weeks, weekOffset })); } catch(e) {}
+}
+function load() {
+  try {
+    const raw = localStorage.getItem('wt3_data');
+    if (!raw) return;
+    const d = JSON.parse(raw);
+    if (d.weeks) Object.assign(weeks, d.weeks);
+    if (typeof d.weekOffset === 'number') weekOffset = d.weekOffset;
+  } catch(e) {}
+}
+
+function toggleTheme() {
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  document.documentElement.setAttribute('data-theme', dark ? '' : 'dark');
+  try { localStorage.setItem('wt3_theme', dark ? 'light' : 'dark'); } catch(e) {}
+}
+(function(){
+  try { if (localStorage.getItem('wt3_theme') === 'dark') document.documentElement.setAttribute('data-theme','dark'); } catch(e) {}
+})();
+
+function exportData() {
+  const blob = new Blob([JSON.stringify({ weeks, weekOffset }, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'weekly-tracker-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click(); URL.revokeObjectURL(a.href);
+}
+function openImport() { document.getElementById('import-modal').classList.add('open'); }
+function closeImport() { document.getElementById('import-modal').classList.remove('open'); document.getElementById('import-ta').value=''; }
+function doImport() {
+  try {
+    const d = JSON.parse(document.getElementById('import-ta').value.trim());
+    if (d.weeks) { Object.keys(weeks).forEach(k=>delete weeks[k]); Object.assign(weeks, d.weeks); }
+    if (typeof d.weekOffset === 'number') weekOffset = d.weekOffset;
+    save(); closeImport(); init();
+  } catch(e) { alert('Invalid JSON — please check the file and try again.'); }
+}
+
+function weekKey(off) {
+  const now = new Date(), day = now.getDay();
+  const mon = new Date(now);
+  mon.setDate(now.getDate() - (day===0?6:day-1) + off*7);
+  return mon.toISOString().slice(0,10);
+}
+function getWeekLabel(off) {
+  const now = new Date(), day = now.getDay();
+  const mon = new Date(now);
+  mon.setDate(now.getDate() - (day===0?6:day-1) + off*7);
+  const fri = new Date(mon); fri.setDate(mon.getDate()+4);
+  const fmt = d => d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+  const suf = off===0?' (this week)':off===-1?' (last week)':off===1?' (next week)':'';
+  return `Week of ${fmt(mon)} – ${fmt(fri)}${suf}`;
+}
+function getOrCreate(key) {
+  if (!weeks[key]) weeks[key] = { doing:[], planned:[], blocked:[], done:[], cancelled:[] };
+  if (!weeks[key].cancelled) weeks[key].cancelled = [];
+  return weeks[key];
+}
+
+function checkCarry() {
+  const bar = document.getElementById('carry-banner');
+  const prevKeys = Object.keys(weeks).filter(k => k < currentKey);
+  let total = 0;
+  prevKeys.forEach(k => { const w = weeks[k]; total += w.doing.length + w.planned.length + w.blocked.length; });
+  if (total > 0) {
+    bar.style.display = 'flex';
+    document.getElementById('carry-msg').textContent = `${total} incomplete task${total>1?'s':''} from a previous week.`;
+  } else { bar.style.display = 'none'; }
+}
+function carryOver() {
+  const prevKeys = Object.keys(weeks).filter(k => k < currentKey).sort();
+  const cur = getOrCreate(currentKey);
+  prevKeys.forEach(k => {
+    const w = weeks[k];
+    ['doing','planned','blocked'].forEach(col => {
+      w[col].forEach(it => cur[col].push({ text:it.text, note:it.note||'', carried:true, ongoing:it.ongoing||false }));
+      w[col] = [];
+    });
+  });
+  save(); document.getElementById('carry-banner').style.display='none'; render();
+}
+
+// Auto carry ongoing tasks when moving forward a week
+function autoCarryOngoing(fromKey, toKey) {
+  const from = weeks[fromKey]; if (!from) return;
+  const to = getOrCreate(toKey);
+  ['doing','planned','blocked'].forEach(col => {
+    from[col].filter(it => it.ongoing).forEach(it => {
+      const already = to[col].some(x => x.text === it.text && x.ongoing);
+      if (!already) to[col].push({ text:it.text, note:it.note||'', carried:true, ongoing:true });
+    });
+  });
+}
+
+function changeWeek(dir) {
+  const oldKey = weekKey(weekOffset);
+  weekOffset += dir;
+  if (dir > 0) autoCarryOngoing(oldKey, weekKey(weekOffset));
+  currentKey = weekKey(weekOffset);
+  getOrCreate(currentKey);
+  document.getElementById('week-label').textContent = getWeekLabel(weekOffset);
+  save(); checkCarry(); render();
+}
+
+function addItem(col) {
+  const inp = document.getElementById('in-'+col), v = inp.value.trim(); if (!v) return;
+  getOrCreate(currentKey)[col].push({ text:v, note:'', carried:false, ongoing:false });
+  inp.value=''; save(); render();
+}
+function removeItem(col, i) {
+  getOrCreate(currentKey)[col].splice(i,1); delete editing[col+i]; save(); render();
+}
+function markDone(col, i) {
+  const w = getOrCreate(currentKey), it = w[col].splice(i,1)[0];
+  it.completedFrom = col; w.done.push(it); save(); render();
+}
+function markCancelled(col, i) {
+  const w = getOrCreate(currentKey), it = w[col].splice(i,1)[0];
+  it.cancelledFrom = col; w.cancelled.push(it); save(); render();
+}
+function restoreItem(section, i) {
+  const w = getOrCreate(currentKey), it = w[section].splice(i,1)[0];
+  const col = it.completedFrom || it.cancelledFrom || 'doing';
+  w[col].push({ text:it.text, note:it.note||'', carried:it.carried||false, ongoing:false });
+  save(); render();
+}
+function removeResolved(section, i) {
+  getOrCreate(currentKey)[section].splice(i,1); save(); render();
+}
+function clearSection(section) {
+  if (!confirm(`Remove all ${section} tasks from this week?`)) return;
+  getOrCreate(currentKey)[section] = []; save(); render();
+}
+function toggleOngoing(col, i) {
+  const it = getOrCreate(currentKey)[col][i]; it.ongoing = !it.ongoing; save(); render();
+}
+function toggleNote(col, i) {
+  const k = col+i; editing[k] = !editing[k]; render();
+  if (editing[k]) { const ta = document.getElementById('nte-'+k); if(ta){ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);} }
+}
+function saveNote(col, i) {
+  const k=col+i, ta=document.getElementById('nte-'+k);
+  if(ta) getOrCreate(currentKey)[col][i].note = ta.value;
+  editing[k]=false; save(); render();
+}
+function toggleSection(sec) {
+  sectionOpen[sec] = !sectionOpen[sec];
+  document.getElementById('body-'+sec).style.display = sectionOpen[sec]?'block':'none';
+  document.getElementById('tog-'+sec).innerHTML = sectionOpen[sec]?'&#9660;':'&#9654;';
+}
+
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function renderItem(col, it, i) {
+  const k=col+i, isEd=editing[k];
+  const noteHtml = isEd
+    ? `<textarea class="item-note-edit" id="nte-${k}" onkeydown="if(event.key==='Enter'&&(event.metaKey||event.ctrlKey))saveNote('${col}',${i})">${esc(it.note)}</textarea><button class="note-save" onclick="saveNote('${col}',${i})">Save note</button>`
+    : it.note ? `<div class="item-note-view">${esc(it.note)}</div>` : '';
+  const tags = (it.carried?`<span class="tag tag-carried">carried</span>`:'')
+             + (it.ongoing?`<span class="tag tag-ongoing">ongoing</span>`:'');
+  const ongoingStyle = it.ongoing ? 'color:var(--purple);' : '';
+  return `<div class="item item-${col}">
+    <div class="item-top">
+      <span class="item-text">${esc(it.text)}${tags}</span>
+      <div class="item-btns">
+        <button class="ibt tick" title="Mark complete" onclick="markDone('${col}',${i})">&#10003;</button>
+        <button class="ibt xbtn" title="Mark as cancelled" onclick="markCancelled('${col}',${i})">&#10007;</button>
+        <button class="ibt" title="${it.ongoing?'Remove ongoing flag':'Mark as ongoing — auto carries to next week'}" onclick="toggleOngoing('${col}',${i})" style="${ongoingStyle}">${it.ongoing?'&#9670;':'&#9671;'}</button>
+        <button class="ibt" title="${isEd?'Cancel note':'Add/edit note'}" onclick="toggleNote('${col}',${i})">${isEd?'&#x2715;':(it.note?'&#9998;':'&#43;&#9650;')}</button>
+        <button class="ibt del" title="Delete permanently" onclick="removeItem('${col}',${i})">&#x2715;</button>
+      </div>
+    </div>${noteHtml}</div>`;
+}
+
+function renderResolved(section, it, i) {
+  const isCancelled = section === 'cancelled';
+  const noteHtml = it.note ? `<div class="item-note-view">${esc(it.note)}</div>` : '';
+  const tags = it.carried ? `<span class="tag tag-carried">carried</span>` : '';
+  const textClass = isCancelled ? 'cancelled-text' : 'struck';
+  const cancelledTag = isCancelled ? `<span class="tag tag-cancelled-label">cancelled</span>` : '';
+  return `<div class="item ${isCancelled?'item-cancelled-s':'item-done-s'}">
+    <div class="item-top">
+      <span class="item-text ${textClass}">${esc(it.text)}${tags}${cancelledTag}</span>
+      <div class="item-btns">
+        <button class="ibt" title="Restore to active" onclick="restoreItem('${section}',${i})" style="font-size:14px;">&#8617;</button>
+        <button class="ibt del" title="Remove permanently" onclick="removeResolved('${section}',${i})">&#x2715;</button>
+      </div>
+    </div>${noteHtml}</div>`;
+}
+
+function render() {
+  const w = getOrCreate(currentKey);
+  ['doing','planned','blocked'].forEach(col => {
+    document.getElementById('cnt-'+col).textContent = w[col].length;
+    const el = document.getElementById('list-'+col);
+    el.innerHTML = w[col].length===0 ? '<div class="empty">Nothing here yet</div>'
+      : w[col].map((it,i)=>renderItem(col,it,i)).join('');
+  });
+  ['done','cancelled'].forEach(sec => {
+    document.getElementById('cnt-'+sec).textContent = w[sec].length;
+    const el = document.getElementById('list-'+sec);
+    el.innerHTML = w[sec].length===0 ? `<div class="empty">No ${sec} tasks</div>`
+      : w[sec].map((it,i)=>renderResolved(sec,it,i)).join('');
+  });
+  updateSummary(w);
+}
+
+function updateSummary(w) {
+  const total = w.doing.length+w.planned.length+w.blocked.length+w.done.length+w.cancelled.length;
+  const el = document.getElementById('summary');
+  if (total===0) { el.textContent='Add items above to generate your update.'; return; }
+  const L=[];
+  L.push('Weekly update — '+getWeekLabel(weekOffset));
+  L.push('');
+  L.push(`Summary: ${w.doing.length} in progress, ${w.planned.length} planned, ${w.blocked.length} blocked, ${w.done.length} completed, ${w.cancelled.length} cancelled`);
+  if (w.doing.length) { L.push(''); L.push('IN PROGRESS'); w.doing.forEach(it=>{ L.push('  • '+it.text+(it.ongoing?' [ongoing]':'')+(it.carried?' [carried]':'')); if(it.note) L.push('    Note: '+it.note); }); }
+  if (w.planned.length) { L.push(''); L.push('PLANNED'); w.planned.forEach(it=>{ L.push('  • '+it.text+(it.ongoing?' [ongoing]':'')+(it.carried?' [carried]':'')); if(it.note) L.push('    Note: '+it.note); }); }
+  if (w.blocked.length) { L.push(''); L.push('BLOCKED'); w.blocked.forEach(it=>{ L.push('  • '+it.text+(it.ongoing?' [ongoing]':'')+(it.carried?' [carried]':'')); if(it.note) L.push('    Note: '+it.note); }); }
+  if (w.done.length) { L.push(''); L.push('COMPLETED'); w.done.forEach(it=>{ L.push('  • '+it.text); if(it.note) L.push('    Note: '+it.note); }); }
+  if (w.cancelled.length) { L.push(''); L.push('CANCELLED'); w.cancelled.forEach(it=>{ L.push('  • '+it.text); if(it.note) L.push('    Note: '+it.note); }); }
+  el.textContent = L.join('\n').trim();
+}
+
+function copyUpdate() {
+  const txt = document.getElementById('summary').textContent;
+  if (!txt || txt==='Add items above to generate your update.') return;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const el = document.getElementById('copy-ok');
+    el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2000);
+  });
+}
+
+function init() {
+  currentKey = weekKey(weekOffset);
+  getOrCreate(currentKey);
+  document.getElementById('week-label').textContent = getWeekLabel(weekOffset);
+  checkCarry(); render();
+}
+
+load(); init();
+</script>
+</body>
+</html>
