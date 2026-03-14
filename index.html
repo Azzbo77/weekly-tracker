@@ -84,17 +84,18 @@
   .item-cancelled-s { border-color: var(--amber); opacity: 0.65; }
 
   .item-top { display: flex; align-items: flex-start; gap: 6px; }
-  .item-text { font-size: 13px; color: var(--text); flex: 1; line-height: 1.45; word-break: break-word; }
-  .struck { text-decoration: line-through; color: var(--text-3); }
-  .cancelled-text { text-decoration: line-through; color: var(--amber); }
+  /* Bold task title */
+  .item-text { font-size: 13px; font-weight: 500; color: var(--text); flex: 1; line-height: 1.45; word-break: break-word; }
+  .struck { text-decoration: line-through; color: var(--text-3); font-weight: 400; }
+  .cancelled-text { text-decoration: line-through; color: var(--amber); font-weight: 400; }
 
-  .tag { font-size: 10px; border-radius: 4px; padding: 1px 5px; margin-left: 4px; vertical-align: middle; white-space: nowrap; display: inline-block; }
+  .tag { font-size: 10px; border-radius: 4px; padding: 1px 5px; margin-left: 4px; vertical-align: middle; white-space: nowrap; display: inline-block; font-weight: 400; }
   .tag-carried { background: var(--blue-bg); color: var(--blue); }
   .tag-ongoing { background: var(--purple-bg); color: var(--purple); }
   .tag-cancelled-label { background: var(--amber-bg); color: var(--amber); }
 
   .item-btns { display: flex; gap: 2px; flex-shrink: 0; align-items: center; }
-  .ibt { background: none; border: none; cursor: pointer; color: var(--text-3); font-size: 13px; padding: 1px 3px; line-height: 1; font-family: 'DM Sans', sans-serif; border-radius: 4px; transition: color 0.1s, background 0.1s; }
+  .ibt { background: none; border: none; cursor: pointer; color: var(--text-3); font-size: 13px; padding: 1px 3px; line-height: 1; font-family: 'DM Sans', sans-serif; border-radius: 4px; transition: color 0.1s, background 0.1s; font-weight: 400; }
   .ibt:hover { color: var(--text); background: rgba(128,128,128,0.1); }
   .ibt.del:hover { color: var(--red); }
   .ibt.tick:hover { color: var(--green); }
@@ -103,65 +104,64 @@
   .move-wrap { position: relative; display: inline-block; }
   .move-menu { display: none; position: absolute; right: 0; top: 100%; background: var(--surface); border: 0.5px solid var(--border-mid); border-radius: var(--radius-sm); box-shadow: 0 4px 12px rgba(0,0,0,0.12); z-index: 50; min-width: 140px; padding: 4px 0; }
   .move-menu.open { display: block; }
-  .move-opt { display: block; width: 100%; background: none; border: none; padding: 7px 12px; font-size: 12px; font-family: 'DM Sans', sans-serif; color: var(--text-2); cursor: pointer; text-align: left; white-space: nowrap; }
+  .move-opt { display: block; width: 100%; background: none; border: none; padding: 7px 12px; font-size: 12px; font-family: 'DM Sans', sans-serif; color: var(--text-2); cursor: pointer; text-align: left; white-space: nowrap; font-weight: 400; }
   .move-opt:hover { background: var(--surface2); color: var(--text); }
   .move-opt .move-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 7px; vertical-align: middle; }
 
   /* Note editor */
   .note-editor { margin-top: 6px; border: 0.5px solid var(--border-mid); border-radius: var(--radius-sm); overflow: hidden; }
   .note-toolbar { display: flex; gap: 2px; padding: 4px 6px; background: var(--surface); border-bottom: 0.5px solid var(--border); }
-  .note-tb-btn { background: none; border: none; cursor: pointer; color: var(--text-2); font-size: 12px; padding: 3px 7px; border-radius: 4px; font-family: 'DM Sans', sans-serif; line-height: 1.2; transition: background 0.1s, color 0.1s; }
+  .note-tb-btn { background: none; border: none; cursor: pointer; color: var(--text-2); font-size: 12px; padding: 3px 7px; border-radius: 4px; font-family: 'DM Sans', sans-serif; line-height: 1.2; transition: background 0.1s, color 0.1s; font-weight: 400; }
   .note-tb-btn:hover { background: var(--surface2); color: var(--text); }
-  .note-tb-btn.active { background: var(--surface2); color: var(--text); }
   .note-tb-sep { width: 0.5px; background: var(--border-mid); margin: 2px 4px; }
-  .note-area { width: 100%; font-size: 12px; border: none; padding: 7px 9px; background: var(--surface); color: var(--text); resize: vertical; min-height: 60px; font-family: 'DM Sans', sans-serif; outline: none; display: block; }
+  .note-area { width: 100%; font-size: 12px; border: none; padding: 7px 9px; background: var(--surface); color: var(--text); resize: vertical; min-height: 60px; font-family: 'DM Sans', sans-serif; outline: none; display: block; font-weight: 400; }
   .note-footer { display: flex; align-items: center; justify-content: space-between; padding: 4px 6px; background: var(--surface); border-top: 0.5px solid var(--border); }
   .note-hint { font-size: 10px; color: var(--text-3); }
-  .note-save { font-size: 11px; padding: 3px 10px; background: var(--text); color: var(--bg); border: none; border-radius: var(--radius-sm); cursor: pointer; font-family: 'DM Sans', sans-serif; }
+  .note-save { font-size: 11px; padding: 3px 10px; background: var(--text); color: var(--bg); border: none; border-radius: var(--radius-sm); cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 400; }
   .note-save:hover { opacity: 0.85; }
 
   /* Rendered note */
-  .item-note-view { font-size: 12px; color: var(--text-2); margin-top: 5px; padding-top: 5px; border-top: 0.5px solid var(--border); line-height: 1.6; word-break: break-word; }
+  .item-note-view { font-size: 12px; font-weight: 400; color: var(--text-2); margin-top: 5px; padding-top: 5px; border-top: 0.5px solid var(--border); line-height: 1.6; word-break: break-word; }
   .item-note-view ul { list-style: disc; padding-left: 16px; margin: 2px 0; }
   .item-note-view li { margin: 1px 0; }
   .item-note-view s { color: var(--text-3); }
 
   .add-row { display: flex; gap: 5px; margin-top: 8px; }
-  .add-in { flex: 1; font-size: 13px; border: 0.5px solid var(--border-mid); border-radius: var(--radius-sm); padding: 5px 9px; background: var(--surface); color: var(--text); font-family: 'DM Sans', sans-serif; outline: none; }
+  .add-in { flex: 1; font-size: 13px; border: 0.5px solid var(--border-mid); border-radius: var(--radius-sm); padding: 5px 9px; background: var(--surface); color: var(--text); font-family: 'DM Sans', sans-serif; outline: none; font-weight: 400; }
   .add-in:focus { border-color: var(--blue); }
-  .add-btn { background: var(--surface2); border: 0.5px solid var(--border-mid); border-radius: var(--radius-sm); padding: 5px 10px; cursor: pointer; font-size: 15px; color: var(--text-2); }
+  .add-btn { background: var(--surface2); border: 0.5px solid var(--border-mid); border-radius: var(--radius-sm); padding: 5px 10px; cursor: pointer; font-size: 15px; color: var(--text-2); font-weight: 400; }
   .add-btn:hover { background: var(--surface); color: var(--text); }
 
   .lower-section { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 14px; box-shadow: var(--shadow); margin-bottom: 10px; }
   .section-head { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
   .section-toggle { font-size: 10px; color: var(--text-3); margin-left: auto; }
-  .section-clear { font-size: 11px; color: var(--text-3); cursor: pointer; padding: 2px 6px; border-radius: 4px; }
+  .section-clear { font-size: 11px; color: var(--text-3); cursor: pointer; padding: 2px 6px; border-radius: 4px; font-weight: 400; }
   .section-clear:hover { color: var(--red); background: var(--red-bg); }
   .section-body { margin-top: 10px; }
 
   .hint-row { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 12px; }
-  .hint { font-size: 11px; color: var(--text-3); }
+  .hint { font-size: 11px; color: var(--text-3); font-weight: 400; }
 
   .summary-box { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 14px; box-shadow: var(--shadow); }
   .summary-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
   .summary-label { font-size: 12px; font-weight: 500; color: var(--text-2); letter-spacing: 0.04em; text-transform: uppercase; }
-  .summary-text { font-size: 12px; font-family: 'DM Mono', monospace; color: var(--text); white-space: pre-wrap; line-height: 1.75; }
+  .summary-text { font-size: 12px; font-family: 'DM Mono', monospace; color: var(--text); white-space: pre-wrap; line-height: 1.75; font-weight: 400; }
 
   .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 100; align-items: flex-start; justify-content: center; padding: 2rem 1rem; overflow-y: auto; }
   .modal-bg.open { display: flex; }
   .modal { background: var(--surface); border: 0.5px solid var(--border-mid); border-radius: var(--radius); padding: 24px; width: 560px; max-width: 95vw; margin: auto; }
   .modal-title { font-size: 16px; font-weight: 500; margin-bottom: 4px; color: var(--text); }
   .modal-sub { font-size: 12px; color: var(--text-3); margin-bottom: 16px; }
-  .modal textarea { width: 100%; height: 140px; font-size: 12px; font-family: 'DM Mono', monospace; border: 0.5px solid var(--border-mid); border-radius: var(--radius-sm); padding: 8px; background: var(--surface2); color: var(--text); resize: vertical; outline: none; }
+  .modal textarea { width: 100%; height: 140px; font-size: 12px; font-family: 'DM Mono', monospace; border: 0.5px solid var(--border-mid); border-radius: var(--radius-sm); padding: 8px; background: var(--surface2); color: var(--text); resize: vertical; outline: none; font-weight: 400; }
   .modal-actions { display: flex; gap: 8px; margin-top: 16px; justify-content: flex-end; }
 
   .help-section { margin-bottom: 20px; }
   .help-section:last-of-type { margin-bottom: 0; }
   .help-heading { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 8px; padding-bottom: 6px; border-bottom: 0.5px solid var(--border); }
   .help-grid { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; align-items: start; }
-  .help-icon { font-size: 13px; color: var(--text-2); padding-top: 1px; white-space: nowrap; font-family: 'DM Mono', monospace; }
-  .help-desc { font-size: 13px; color: var(--text-2); line-height: 1.5; }
-  .help-para { font-size: 13px; color: var(--text-2); line-height: 1.6; margin-bottom: 6px; }
+  .help-icon { font-size: 13px; color: var(--text-2); padding-top: 1px; white-space: nowrap; font-family: 'DM Mono', monospace; font-weight: 400; }
+  .help-desc { font-size: 13px; color: var(--text-2); line-height: 1.5; font-weight: 400; }
+  .help-para { font-size: 13px; color: var(--text-2); line-height: 1.6; margin-bottom: 6px; font-weight: 400; }
   .help-para:last-child { margin-bottom: 0; }
   .help-tag-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; align-items: center; }
 
@@ -304,8 +304,8 @@
       <div class="help-grid">
         <span class="help-icon">• List</span>
         <span class="help-desc">Inserts a bullet point at the current cursor position. Each line starting with • is rendered as a list item when saved.</span>
-        <span class="help-icon">~~S~~</span>
-        <span class="help-desc">Wraps the selected text in ~~ markers to apply strikethrough formatting, useful for noting something that no longer applies.</span>
+        <span class="help-icon" style="text-decoration:line-through;">S</span>
+        <span class="help-desc">Wraps the selected text in ~~ markers to apply strikethrough. The strikethrough also carries through to your copied manager update. Click it again on struck text to remove it.</span>
       </div>
       <p class="help-para" style="margin-top:8px;">Press <strong>Cmd+Enter</strong> (Mac) or <strong>Ctrl+Enter</strong> (Windows) to save a note quickly, or click the Save button.</p>
     </div>
@@ -331,7 +331,7 @@
 
     <div class="help-section">
       <div class="help-heading">Manager update</div>
-      <p class="help-para">The manager update preview at the bottom of the page builds automatically as you add tasks. When you're ready, click <strong>Copy update</strong> to copy the formatted text to your clipboard and paste it into an email, Teams message, or Slack.</p>
+      <p class="help-para">The manager update preview at the bottom of the page builds automatically as you add tasks. When you're ready, click <strong>Copy update</strong> to copy the formatted text to your clipboard and paste it into an email, Teams message, or Slack. Strikethrough in notes is preserved in the copied text using ~~ markers.</p>
     </div>
 
     <div class="help-section">
@@ -374,16 +374,12 @@ document.addEventListener('click', () => {
 });
 
 // ── Note formatting ───────────────────────────────────────
-// Storage format: plain text with • for bullets and ~~text~~ for strikethrough
-// Rendered as HTML for display, plain text in the copied update
-
 function renderNoteHtml(raw) {
   if (!raw) return '';
   const lines = raw.split('\n');
   let html = '';
   let inList = false;
   lines.forEach(line => {
-    // Apply strikethrough: ~~text~~ → <s>text</s>
     const formatted = line.replace(/~~(.*?)~~/g, '<s>$1</s>');
     if (line.startsWith('• ') || line === '•') {
       if (!inList) { html += '<ul>'; inList = true; }
@@ -394,31 +390,36 @@ function renderNoteHtml(raw) {
     }
   });
   if (inList) html += '</ul>';
-  // Remove trailing <br>
   html = html.replace(/(<br>)+$/, '');
   return html;
 }
 
+// Converts raw note to plain text for the manager update.
+// Preserves strikethrough using ~~text~~ so the recipient can see what was struck.
 function noteToPlainText(raw) {
   if (!raw) return '';
-  // Strip ~~ markers, keep bullet text
-  return raw.replace(/~~(.*?)~~/g, '$1');
+  // Keep ~~ markers intact — they read clearly as struck-through text in plain copy
+  return raw;
+}
+
+// Converts raw note to a compact single-line summary for the update preview
+function noteToUpdateLines(raw) {
+  if (!raw) return [];
+  return raw.split('\n').filter(l => l.trim()).map(l => '      ' + l.trim());
 }
 
 function insertBullet(taId) {
   const ta = document.getElementById(taId); if (!ta) return;
-  const start = ta.selectionStart, end = ta.selectionEnd;
+  const start = ta.selectionStart;
   const val = ta.value;
-  // Insert bullet at start of current line
   const lineStart = val.lastIndexOf('\n', start - 1) + 1;
-  const lineContent = val.substring(lineStart, end);
+  const lineEnd = val.indexOf('\n', start);
+  const lineContent = val.substring(lineStart, lineEnd === -1 ? val.length : lineEnd);
   const hasBullet = lineContent.startsWith('• ');
   if (hasBullet) {
-    // Remove bullet
-    ta.value = val.substring(0, lineStart) + lineContent.substring(2) + val.substring(end);
-    ta.selectionStart = ta.selectionEnd = start - 2;
+    ta.value = val.substring(0, lineStart) + lineContent.substring(2) + val.substring(lineStart + lineContent.length);
+    ta.selectionStart = ta.selectionEnd = Math.max(lineStart, start - 2);
   } else {
-    // Add bullet — if line is empty just insert bullet+space, else insert at line start
     ta.value = val.substring(0, lineStart) + '• ' + val.substring(lineStart);
     ta.selectionStart = ta.selectionEnd = start + 2;
   }
@@ -431,8 +432,7 @@ function insertStrike(taId) {
   const val = ta.value;
   const selected = val.substring(start, end);
   if (selected) {
-    // Check if already wrapped
-    if (selected.startsWith('~~') && selected.endsWith('~~')) {
+    if (selected.startsWith('~~') && selected.endsWith('~~') && selected.length > 4) {
       const unwrapped = selected.slice(2, -2);
       ta.value = val.substring(0, start) + unwrapped + val.substring(end);
       ta.selectionStart = start; ta.selectionEnd = start + unwrapped.length;
@@ -442,7 +442,6 @@ function insertStrike(taId) {
       ta.selectionStart = start; ta.selectionEnd = start + wrapped.length;
     }
   } else {
-    // No selection — insert placeholder
     const placeholder = '~~text~~';
     ta.value = val.substring(0, start) + placeholder + val.substring(end);
     ta.selectionStart = start + 2; ta.selectionEnd = start + 6;
@@ -452,11 +451,11 @@ function insertStrike(taId) {
 
 // ── Persistence ───────────────────────────────────────────
 function save() {
-  try { localStorage.setItem('wt6_data', JSON.stringify({ weeks, weekOffset })); } catch(e) {}
+  try { localStorage.setItem('wt7_data', JSON.stringify({ weeks, weekOffset })); } catch(e) {}
 }
 function load() {
   try {
-    const raw = localStorage.getItem('wt6_data');
+    const raw = localStorage.getItem('wt7_data');
     if (!raw) return;
     const d = JSON.parse(raw);
     if (d.weeks) Object.assign(weeks, d.weeks);
@@ -467,10 +466,10 @@ function load() {
 function toggleTheme() {
   const dark = document.documentElement.getAttribute('data-theme') === 'dark';
   document.documentElement.setAttribute('data-theme', dark ? '' : 'dark');
-  try { localStorage.setItem('wt6_theme', dark ? 'light' : 'dark'); } catch(e) {}
+  try { localStorage.setItem('wt7_theme', dark ? 'light' : 'dark'); } catch(e) {}
 }
 (function(){
-  try { if (localStorage.getItem('wt6_theme') === 'dark') document.documentElement.setAttribute('data-theme','dark'); } catch(e) {}
+  try { if (localStorage.getItem('wt7_theme') === 'dark') document.documentElement.setAttribute('data-theme','dark'); } catch(e) {}
 })();
 
 function openHelp() { document.getElementById('help-modal').classList.add('open'); }
@@ -707,11 +706,25 @@ function updateSummary(w) {
   L.push('Weekly update — '+getWeekLabel(weekOffset));
   L.push('');
   L.push(`Summary: ${w.doing.length} in progress, ${w.planned.length} planned, ${w.blocked.length} blocked, ${w.done.length} completed, ${w.cancelled.length} cancelled`);
-  if (w.doing.length) { L.push(''); L.push('IN PROGRESS'); w.doing.forEach(it=>{ L.push('  • '+it.text+(it.ongoing?' [ongoing]':'')+(it.carried?' [carried]':'')); if(it.note) L.push('    Note: '+noteToPlainText(it.note)); }); }
-  if (w.planned.length) { L.push(''); L.push('PLANNED'); w.planned.forEach(it=>{ L.push('  • '+it.text+(it.ongoing?' [ongoing]':'')+(it.carried?' [carried]':'')); if(it.note) L.push('    Note: '+noteToPlainText(it.note)); }); }
-  if (w.blocked.length) { L.push(''); L.push('BLOCKED'); w.blocked.forEach(it=>{ L.push('  • '+it.text+(it.ongoing?' [ongoing]':'')+(it.carried?' [carried]':'')); if(it.note) L.push('    Note: '+noteToPlainText(it.note)); }); }
-  if (w.done.length) { L.push(''); L.push('COMPLETED'); w.done.forEach(it=>{ L.push('  • '+it.text); if(it.note) L.push('    Note: '+noteToPlainText(it.note)); }); }
-  if (w.cancelled.length) { L.push(''); L.push('CANCELLED'); w.cancelled.forEach(it=>{ L.push('  • '+it.text); if(it.note) L.push('    Note: '+noteToPlainText(it.note)); }); }
+
+  function addSection(label, items) {
+    if (!items.length) return;
+    L.push(''); L.push(label);
+    items.forEach(it => {
+      const flags = (it.ongoing?' [ongoing]':'')+(it.carried?' [carried]':'');
+      L.push(`  • ${it.text}${flags}`);
+      if (it.note) {
+        noteToUpdateLines(it.note).forEach(l => L.push(l));
+      }
+    });
+  }
+
+  addSection('IN PROGRESS', w.doing);
+  addSection('PLANNED', w.planned);
+  addSection('BLOCKED', w.blocked);
+  addSection('COMPLETED', w.done);
+  addSection('CANCELLED', w.cancelled);
+
   el.textContent = L.join('\n').trim();
 }
 
@@ -722,16 +735,3 @@ function copyUpdate() {
     const el=document.getElementById('copy-ok');
     el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2000);
   });
-}
-
-function init() {
-  currentKey = weekKey(weekOffset);
-  getOrCreate(currentKey);
-  document.getElementById('week-label').textContent = getWeekLabel(weekOffset);
-  checkCarry(); render();
-}
-
-load(); init();
-</script>
-</body>
-</html>
