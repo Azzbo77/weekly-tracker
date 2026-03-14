@@ -344,10 +344,7 @@ const secOpen={done:true,cancelled:true};
 const editing={};
 let currentKey='',weekOffset=0;
 
-// ── Modal wiring (no inline onclick on modal-bg) ──────────
-// Initialise immediately so currentKey is set before any button clicks
-load();init();
-
+// ── Modal wiring ──────────────────────────────────────────
 document.addEventListener('DOMContentLoaded',()=>{
   // Help modal
   document.getElementById('help-close-btn').addEventListener('click',()=>closeModal('help-modal'));
@@ -657,6 +654,9 @@ function init(){
   document.getElementById('wk-lbl').textContent=getWeekLabel(weekOffset);
   checkCarry();render();
 }
+
+// Run once everything is defined
+load();init();
 </script>
 </body>
 </html>
