@@ -544,7 +544,7 @@ function renderNoteHtml(raw){
 function noteToUpdateLines(raw){
   if(!raw)return[];
   return raw.split('\n').filter(l=>l.trim()).map(l=>{
-    const cleaned=l.trim().replace(/~~(.*?)~~/g,'[crossed out: $1]').trim();
+    const cleaned=l.trim().replace(/~~(.*?)~~/g,'[Done: $1]').trim();
     return cleaned?'      '+cleaned:null;
   }).filter(Boolean);
 }
