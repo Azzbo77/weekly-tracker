@@ -184,18 +184,18 @@
   <div class="hd">
     <div class="hd-title">Weekly tracker</div>
     <div class="hd-acts">
-      <button class="btn btn-sm" onclick="openHelp()">How to use</button>
-      <button class="btn btn-sm" onclick="openPdfExport()">Export PDF</button>
-      <button class="btn btn-sm" onclick="exportData()">Export JSON</button>
-      <button class="btn btn-sm" onclick="openImport()">Import JSON</button>
-      <button class="btn btn-ic" onclick="toggleTheme()" title="Toggle dark mode">&#9788;</button>
+      <button class="btn btn-sm" onclick="openHelp()" aria-label="Open help and usage guide">How to use</button>
+      <button class="btn btn-sm" onclick="openPdfExport()" aria-label="Export current week as PDF">Export PDF</button>
+      <button class="btn btn-sm" onclick="exportData()" aria-label="Export all data as JSON file">Export JSON</button>
+      <button class="btn btn-sm" onclick="openImport()" aria-label="Import previously exported JSON">Import JSON</button>
+      <button class="btn btn-ic" onclick="toggleTheme()" title="Toggle dark mode" aria-label="Toggle light/dark theme">&#9788;</button>
     </div>
   </div>
 
   <div class="wk-nav">
-    <button class="btn btn-ic" onclick="changeWeek(-1)">&#8592;</button>
+    <button class="btn btn-ic" onclick="changeWeek(-1)" aria-label="Go to previous week">&#8592;</button>
     <span class="wk-lbl" id="wk-lbl"></span>
-    <button class="btn btn-ic" onclick="changeWeek(1)">&#8594;</button>
+    <button class="btn btn-ic" onclick="changeWeek(1)" aria-label="Go to next week">&#8594;</button>
   </div>
 
   <div id="carry-bar" style="display:none" class="carry">
@@ -266,9 +266,9 @@
 </div>
 
 <!-- PDF Export -->
-<div class="modal-bg" id="pdf-modal">
+<div class="modal-bg" id="pdf-modal" role="dialog" aria-modal="true" aria-labelledby="pdf-modal-title">
   <div class="modal" style="width:420px" onclick="event.stopPropagation()">
-    <div class="modal-title">Export as PDF</div>
+    <div class="modal-title" id="pdf-modal-title">Export as PDF</div>
     <div class="modal-sub">Choose which weeks to include and how the report should look.</div>
     <div style="font-size:12px;font-weight:500;color:var(--text-2);margin-bottom:8px">Weeks</div>
     <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
@@ -300,9 +300,9 @@
 </div>
 
 <!-- How to use -->
-<div class="modal-bg" id="help-modal">
+<div class="modal-bg" id="help-modal" role="dialog" aria-modal="true" aria-labelledby="help-modal-title">
   <div class="modal">
-    <div class="modal-title">How to use the weekly tracker</div>
+    <div class="modal-title" id="help-modal-title">How to use the weekly tracker</div>
     <div class="modal-sub">A quick guide to getting the most out of your tracker.</div>
     <div class="h-sec">
       <div class="h-hd">The three columns</div>
@@ -358,9 +358,9 @@
 </div>
 
 <!-- Import -->
-<div class="modal-bg" id="import-modal">
+<div class="modal-bg" id="import-modal" role="dialog" aria-modal="true" aria-labelledby="import-modal-title">
   <div class="modal">
-    <div class="modal-title">Import JSON</div>
+    <div class="modal-title" id="import-modal-title">Import JSON</div>
     <div class="modal-sub">Paste a previously exported JSON file to restore your data. This will overwrite your current data.</div>
     <textarea id="import-ta" placeholder="Paste exported JSON here…"></textarea>
     <div class="modal-acts">
@@ -379,24 +379,38 @@ const secOpen={done:true,cancelled:true};
 const editing={};
 let currentKey='',weekOffset=0;
 
+// ── Storage keys ──────────────────────────────────────────
+const STORAGE_KEY='wt8';
+const STORAGE_THEME='wt8_theme';
+
+// ── Theme colors for PDF export ───────────────────────────
+const PDF_THEMES={
+  light:{
+    BG:'#ffffff',TEXT:'#1a1917',TEXT2:'#6b6860',TEXT3:'#a8a49e',DIVIDER:'#e0ddd8',
+    GREEN:'#1a7a56',GREEN_BG:'#e8f5ef',BLUE:'#1a5fa8',BLUE_BG:'#e8f0fb',
+    RED:'#b83232',RED_BG:'#fbeaea',AMBER:'#9a6200',AMBER_BG:'#fef3db',
+    GREY:'#6b6860',GREY_BG:'#f0ede8',PURPLE:'#6b3fa0',PURPLE_BG:'#f0eafa',
+    TITLE_LINE:'#1a1917',ITEM_BORDER:'rgba(0,0,0,0.06)'
+  },
+  dark:{
+    BG:'#141312',TEXT:'#f0ede8',TEXT2:'#9e9a94',TEXT3:'#5c5955',DIVIDER:'rgba(255,255,255,0.12)',
+    GREEN:'#3ecf8e',GREEN_BG:'#0e2a1e',BLUE:'#5b9cf6',BLUE_BG:'#0d1f3c',
+    RED:'#f07070',RED_BG:'#2d1212',AMBER:'#f0b429',AMBER_BG:'#2a1f05',
+    GREY:'#9e9a94',GREY_BG:'#272523',PURPLE:'#b07ef5',PURPLE_BG:'#1e1030',
+    TITLE_LINE:'#f0ede8',ITEM_BORDER:'rgba(255,255,255,0.07)'
+  }
+};
+
 // ── Modal wiring ──────────────────────────────────────────
+function setupModal(modalId,cancelBtnId,confirmHandler){const m=document.getElementById(modalId),c=document.getElementById(cancelBtnId);c.addEventListener('click',()=>closeModal(modalId));if(confirmHandler)document.getElementById(cancelBtnId.replace('cancel','confirm')).addEventListener('click',confirmHandler);m.addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal(modalId);});}
 document.addEventListener('DOMContentLoaded',()=>{
-  // PDF modal
-  document.getElementById('pdf-cancel-btn').addEventListener('click',()=>closeModal('pdf-modal'));
-  document.getElementById('pdf-confirm-btn').addEventListener('click',generatePdf);
-  document.getElementById('pdf-modal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal('pdf-modal');});
-  document.querySelectorAll('input[name="pdf-range"]').forEach(r=>r.addEventListener('change',onPdfRangeChange));
-  // Help modal
-  document.getElementById('help-close-btn').addEventListener('click',()=>closeModal('help-modal'));
-  document.getElementById('help-modal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal('help-modal');});
-  // Import modal
-  document.getElementById('import-cancel-btn').addEventListener('click',()=>closeModal('import-modal'));
+  setupModal('pdf-modal','pdf-cancel-btn',generatePdf);
+  setupModal('help-modal','help-close-btn');
+  setupModal('import-modal','import-cancel-btn');
   document.getElementById('import-confirm-btn').addEventListener('click',doImport);
-  document.getElementById('import-modal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal('import-modal');});
+  document.querySelectorAll('input[name="pdf-range"]').forEach(r=>r.addEventListener('change',onPdfRangeChange));
   // Close move menus on outside click
-  document.addEventListener('click',()=>{
-    document.querySelectorAll('.mv-menu.open').forEach(m=>m.classList.remove('open'));
-  });
+  document.addEventListener('click',()=>{document.querySelectorAll('.mv-menu.open').forEach(m=>m.classList.remove('open'));});
 });
 
 function openModal(id){document.getElementById(id).classList.add('open')}
@@ -405,23 +419,23 @@ function openHelp(){openModal('help-modal')}
 function openImport(){openModal('import-modal')}
 
 // ── Persistence ───────────────────────────────────────────
-function save(){try{localStorage.setItem('wt8',JSON.stringify({weeks,weekOffset}));}catch(e){}}
+function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify({weeks,weekOffset}));}catch(e){console.warn('Failed to save data to localStorage',e);}}
 function load(){
   try{
-    const r=localStorage.getItem('wt8');if(!r)return;
+    const r=localStorage.getItem(STORAGE_KEY);if(!r)return;
     const d=JSON.parse(r);
-    if(d.weeks)Object.assign(weeks,d.weeks);
+    if(d.weeks&&typeof d.weeks==='object')Object.assign(weeks,d.weeks);
     if(typeof d.weekOffset==='number')weekOffset=d.weekOffset;
-  }catch(e){}
+  }catch(e){console.warn('Failed to load data from localStorage',e);}
 }
 
 // ── Theme ─────────────────────────────────────────────────
 function toggleTheme(){
   const dark=document.documentElement.getAttribute('data-theme')==='dark';
   document.documentElement.setAttribute('data-theme',dark?'':'dark');
-  try{localStorage.setItem('wt8_theme',dark?'light':'dark');}catch(e){}
+  try{localStorage.setItem(STORAGE_THEME,dark?'light':'dark');}catch(e){console.warn('Failed to save theme preference',e);}
 }
-(function(){try{if(localStorage.getItem('wt8_theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();
+(function(){try{if(localStorage.getItem(STORAGE_THEME)==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();
 
 // ── Export / Import ───────────────────────────────────────
 function exportData(){
@@ -433,10 +447,18 @@ function exportData(){
 function doImport(){
   try{
     const d=JSON.parse(document.getElementById('import-ta').value.trim());
-    if(d.weeks){Object.keys(weeks).forEach(k=>delete weeks[k]);Object.assign(weeks,d.weeks);}
+    if(!d||typeof d!=='object')throw new Error('Invalid data structure');
+    if(d.weeks&&typeof d.weeks==='object'){
+      Object.keys(weeks).forEach(k=>delete weeks[k]);
+      Object.assign(weeks,d.weeks);
+    }
     if(typeof d.weekOffset==='number')weekOffset=d.weekOffset;
     save();closeModal('import-modal');document.getElementById('import-ta').value='';init();
-  }catch(e){alert('Invalid JSON — please check the file and try again.');}
+    console.log('Data imported successfully');
+  }catch(e){
+    alert('Invalid JSON — '+e.message+'. Please check the file and try again.');
+    console.error('Import failed',e);
+  }
 }
 
 // ── Week helpers ──────────────────────────────────────────
@@ -769,30 +791,8 @@ function generatePdf(){
   setTimeout(()=>{win.print();},600);
 }
 function buildPdfHtml(keys,theme){
-  const dark=theme==='dark';
-
-  // Colours
-  const BG=        dark?'#141312':'#ffffff';
-  const SURFACE=   dark?'#1e1d1b':'#ffffff';
-  const TEXT=      dark?'#f0ede8':'#1a1917';
-  const TEXT2=     dark?'#9e9a94':'#6b6860';
-  const TEXT3=     dark?'#5c5955':'#a8a49e';
-  const DIVIDER=   dark?'rgba(255,255,255,0.12)':'#e0ddd8';
-  const TITLE_LINE=dark?'#f0ede8':'#1a1917';
-
-  const GREEN=     dark?'#3ecf8e':'#1a7a56';
-  const GREEN_BG=  dark?'#0e2a1e':'#e8f5ef';
-  const BLUE=      dark?'#5b9cf6':'#1a5fa8';
-  const BLUE_BG=   dark?'#0d1f3c':'#e8f0fb';
-  const RED=       dark?'#f07070':'#b83232';
-  const RED_BG=    dark?'#2d1212':'#fbeaea';
-  const AMBER=     dark?'#f0b429':'#9a6200';
-  const AMBER_BG=  dark?'#2a1f05':'#fef3db';
-  const GREY=      dark?'#9e9a94':'#6b6860';
-  const GREY_BG=   dark?'#272523':'#f0ede8';
-  const PURPLE=    dark?'#b07ef5':'#6b3fa0';
-  const PURPLE_BG= dark?'#1e1030':'#f0eafa';
-  const ITEM_BORDER=dark?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.06)';
+  const colors=PDF_THEMES[theme]==='light'?PDF_THEMES.light:PDF_THEMES.dark;
+  const {BG,TEXT,TEXT2,TEXT3,DIVIDER,TITLE_LINE,GREEN,GREEN_BG,BLUE,BLUE_BG,RED,RED_BG,AMBER,AMBER_BG,GREY,GREY_BG,PURPLE,PURPLE_BG,ITEM_BORDER}=colors;
 
   function badge(text,color,bg){return `<span style="font-size:9px;font-weight:500;background:${bg};color:${color};border-radius:4px;padding:1px 6px;margin-left:5px;vertical-align:middle;display:inline-block">${text}</span>`;}
   function noteHtml(raw){
