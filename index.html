@@ -173,6 +173,24 @@
   .copy-ok{font-size:12px;color:var(--green);margin-left:8px;opacity:0;transition:opacity .3s}
   .copy-ok.show{opacity:1}
 
+  /* date picker */
+  .note-tb{position:relative}
+  .date-picker{position:fixed;background:var(--surface);border:.5px solid var(--border-mid);border-radius:var(--rs);box-shadow:0 4px 16px rgba(0,0,0,.25);z-index:150;padding:14px;display:none;flex-direction:column;gap:10px;width:280px;max-width:90vw}
+  .date-picker.open{display:flex}
+  .dp-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;padding-bottom:8px;border-bottom:.5px solid var(--border)}
+  .dp-title{font-size:13px;font-weight:500;color:var(--text)}
+  .dp-nav{display:flex;gap:6px}
+  .dp-btn{background:none;border:none;cursor:pointer;color:var(--text-2);font-size:13px;padding:4px 8px;border-radius:4px;font-family:'DM Sans',sans-serif;transition:all .1s;font-weight:400}
+  .dp-btn:hover{background:var(--surface2);color:var(--text)}
+  .dp-calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+  .dp-day-header{font-size:10px;font-weight:600;color:var(--text-3);text-align:center;padding:6px 2px;text-transform:uppercase;letter-spacing:.5px}
+  .dp-day{background:var(--surface2);border:.5px solid var(--border);border-radius:5px;padding:6px 2px;font-size:12px;color:var(--text-2);text-align:center;cursor:pointer;transition:all .1s;font-weight:400;min-height:28px;display:flex;align-items:center;justify-content:center}
+  .dp-day:hover{background:var(--blue-bg);color:var(--blue);border-color:var(--blue)}
+  .dp-day.other-month{opacity:.3;cursor:default}
+  .dp-day.other-month:hover{background:var(--surface2);color:var(--text-2);border-color:var(--border)}
+  .dp-day.today{background:var(--blue-bg);color:var(--blue);border-color:var(--blue);font-weight:600}
+  .dp-day.selected{background:var(--green-bg);color:var(--green);border-color:var(--green);font-weight:600}
+
   @media(max-width:660px){
     .cols{grid-template-columns:1fr}
     .totals{grid-template-columns:repeat(3,1fr)}
@@ -331,6 +349,7 @@
       <div class="h-grid">
         <span class="h-ic">• List</span><span class="h-ds">Inserts a bullet point at the cursor. Each bulleted line renders as a list item when saved.</span>
         <span class="h-ic" style="text-decoration:line-through">S</span><span class="h-ds">Wraps selected text in ~~ for strikethrough. Carries through to the copied manager update. Click again to remove.</span>
+        <span class="h-ic">📅</span><span class="h-ds">Insert a date using the calendar picker. Dates appear in DD/MM/YY format (e.g., 14/03/26).</span>
       </div>
       <p class="h-p" style="margin-top:8px">Press <strong>Cmd+Enter</strong> (Mac) or <strong>Ctrl+Enter</strong> (Windows) to save a note quickly.</p>
     </div>
@@ -409,8 +428,13 @@ document.addEventListener('DOMContentLoaded',()=>{
   setupModal('import-modal','import-cancel-btn');
   document.getElementById('import-confirm-btn').addEventListener('click',doImport);
   document.querySelectorAll('input[name="pdf-range"]').forEach(r=>r.addEventListener('change',onPdfRangeChange));
-  // Close move menus on outside click
-  document.addEventListener('click',()=>{document.querySelectorAll('.mv-menu.open').forEach(m=>m.classList.remove('open'));});
+  // Close move menus and date pickers on outside click
+  document.addEventListener('click',e=>{
+    if(!e.target.closest('.mv-menu')&&!e.target.closest('.dp-btn')&&!e.target.closest('button.ntb-btn')){
+      document.querySelectorAll('.mv-menu.open').forEach(m=>m.classList.remove('open'));
+      document.querySelectorAll('.date-picker.open').forEach(p=>p.classList.remove('open'));
+    }
+  });
 });
 
 function openModal(id){document.getElementById(id).classList.add('open')}
@@ -611,6 +635,68 @@ function insertStrike(id){
   ta.focus();
 }
 
+let datePickerState={taId:null,curDate:new Date(),x:0,y:0};
+function toggleDatePicker(taId){
+  const picker=document.getElementById('dp-'+taId);
+  if(picker.classList.contains('open')){picker.classList.remove('open');datePickerState.taId=null;}else{
+    document.querySelectorAll('.date-picker.open').forEach(p=>p.classList.remove('open'));
+    datePickerState.taId=taId;
+    datePickerState.curDate=new Date();
+    renderDatePicker(taId);
+    picker.classList.add('open');
+    // Position picker near the button
+    const btn=event.target;
+    const rect=btn.getBoundingClientRect();
+    picker.style.left=(rect.left+window.scrollX-40)+'px';
+    picker.style.top=(rect.bottom+window.scrollY+4)+'px';
+  }
+}
+function renderDatePicker(taId){
+  const picker=document.getElementById('dp-'+taId);
+  const month=datePickerState.curDate.getMonth(),year=datePickerState.curDate.getFullYear();
+  const first=new Date(year,month,1),last=new Date(year,month+1,0);
+  const monthName=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][month];
+  const days=['Su','Mo','Tu','We','Th','Fr','Sa'];
+  let html=`<div class="dp-header">
+    <div class="dp-title" style="flex:1">${monthName} ${year}</div>
+    <div class="dp-nav">
+      <button class="dp-btn" onclick="changeDateMonth(-1,'${taId}')">◀</button>
+      <button class="dp-btn" onclick="changeDateMonth(1,'${taId}')">▶</button>
+    </div>
+  </div>
+  <div class="dp-calendar">`;
+  days.forEach(d=>html+=`<div class="dp-day-header">${d}</div>`);
+  const startDay=first.getDay();
+  for(let i=startDay-1;i>=0;i--){
+    const d=new Date(year,month,-(i));html+=`<div class="dp-day other-month">${d.getDate()}</div>`;
+  }
+  for(let i=1;i<=last.getDate();i++){
+    const d=new Date(year,month,i),isToday=d.toISOString().slice(0,10)===new Date().toISOString().slice(0,10);
+    html+=`<div class="dp-day ${isToday?'today':''}" onclick="selectDate('${taId}',${year},${month},${i})">${i}</div>`;
+  }
+  const endDays=42-last.getDate()-startDay;
+  for(let i=1;i<=endDays;i++)html+=`<div class="dp-day other-month">${i}</div>`;
+  html+=`</div>`;
+  picker.innerHTML=html;
+}
+function changeDateMonth(dir,taId){
+  datePickerState.curDate.setMonth(datePickerState.curDate.getMonth()+dir);
+  renderDatePicker(taId);
+}
+function selectDate(taId,year,month,day){
+  const ta=document.getElementById(taId);if(!ta)return;
+  const d=new Date(year,month,day);
+  const dateStr=String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getFullYear()).slice(-2);
+  const pos=ta.selectionStart,val=ta.value,insert=dateStr;
+  ta.value=val.substring(0,pos)+insert+val.substring(pos);
+  ta.selectionStart=ta.selectionEnd=pos+insert.length;
+  document.getElementById('dp-'+taId).classList.remove('open');
+  datePickerState.taId=null;
+  ta.focus();
+}
+// Close pickers on escape
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.querySelectorAll('.date-picker.open').forEach(p=>p.classList.remove('open'));datePickerState.taId=null;}});
+
 function renderNoteHtml(raw){
   if(!raw)return'';
   const lines=raw.split('\n');let html='',inList=false;
@@ -648,6 +734,11 @@ function renderItem(col,it,i){
         <button class="ntb-btn" onclick="insertBullet('${tid}')">• List</button>
         <div class="ntb-sep"></div>
         <button class="ntb-btn" style="text-decoration:line-through" onclick="insertStrike('${tid}')">S</button>
+        <div class="ntb-sep"></div>
+        <div style="position:relative;display:inline-block">
+          <button class="ntb-btn" onclick="toggleDatePicker('${tid}')" title="Insert date">📅</button>
+          <div class="date-picker" id="dp-${tid}"></div>
+        </div>
       </div>
       <textarea class="note-area" id="${tid}" onkeydown="handleNoteKey(event,'${col}',${i})">${esc(it.note)}</textarea>
       <div class="note-ft">
@@ -793,6 +884,8 @@ function generatePdf(){
 function buildPdfHtml(keys,theme){
   const colors=PDF_THEMES[theme]==='light'?PDF_THEMES.light:PDF_THEMES.dark;
   const {BG,TEXT,TEXT2,TEXT3,DIVIDER,TITLE_LINE,GREEN,GREEN_BG,BLUE,BLUE_BG,RED,RED_BG,AMBER,AMBER_BG,GREY,GREY_BG,PURPLE,PURPLE_BG,ITEM_BORDER}=colors;
+  
+  // Note: dates in notes won't be styled specially in PDF, just rendered as plain text
 
   function badge(text,color,bg){return `<span style="font-size:9px;font-weight:500;background:${bg};color:${color};border-radius:4px;padding:1px 6px;margin-left:5px;vertical-align:middle;display:inline-block">${text}</span>`;}
   function noteHtml(raw){
