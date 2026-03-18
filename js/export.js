@@ -1,6 +1,11 @@
 ﻿// â”€â”€ Export / Import â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function exportData() {
-  const b = new Blob([JSON.stringify({ months: weeks, monthOffset }, null, 2)], { type: 'application/json' });
+  const toExport = {};
+  Object.keys(weeks).forEach(k => {
+    const w = weeks[k];
+    if (w.doing.length + w.planned.length + w.blocked.length + w.done.length + w.cancelled.length > 0) toExport[k] = w;
+  });
+  const b = new Blob([JSON.stringify({ months: toExport, monthOffset }, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(b);
   a.download = 'monthly-tracker-' + new Date().toISOString().slice(DATE.ISO_DATE_START, DATE.ISO_DATE_SLICE) + '.json';

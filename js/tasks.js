@@ -114,7 +114,8 @@ function removeItem(col, i) {
   save();
   render();
   showToast('Task deleted.', 'warning', 'Undo', () => {
-    getOrCreate(currentKey)[col].splice(i, 0, removed);
+    const target = getOrCreate(currentKey)[col];
+    target.splice(Math.min(i, target.length), 0, removed);
     save();
     render();
   });
@@ -145,7 +146,8 @@ function markCancelled(col, i) {
 function restoreItem(sec, i) {
   const w = getOrCreate(currentKey);
   const it = w[sec].splice(i, 1)[0];
-  const col = it.completedFrom || it.cancelledFrom || 'doing';
+  const col = COLS.includes(it.completedFrom) ? it.completedFrom :
+              COLS.includes(it.cancelledFrom) ? it.cancelledFrom : 'doing';
   w[col].push(it);
   save();
   render();
@@ -157,7 +159,8 @@ function removeResolved(sec, i) {
   save();
   render();
   showToast('Task deleted.', 'warning', 'Undo', () => {
-    getOrCreate(currentKey)[sec].splice(i, 0, removed);
+    const target = getOrCreate(currentKey)[sec];
+    target.splice(Math.min(i, target.length), 0, removed);
     save();
     render();
   });
@@ -214,7 +217,7 @@ function toggleEditName(col, i) {
       const inp = document.getElementById('itxt-' + k);
       if (inp) {
         inp.focus();
-        inp.setSelectionRange(DATE.ISO_DATE_START, inp.value.length);
+        inp.setSelectionRange(0, inp.value.length);
       }
     }, 0);
   }

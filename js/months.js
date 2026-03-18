@@ -2,7 +2,9 @@
 function monthKey(off) {
   const now = new Date();
   const mon = new Date(now.getFullYear(), now.getMonth() + off, 1);
-  return mon.toISOString().slice(DATE.ISO_DATE_START, DATE.ISO_MONTH_SLICE) + '-01';
+  const y = mon.getFullYear();
+  const m = String(mon.getMonth() + 1).padStart(DATE.PADSTART_LENGTH, '0');
+  return `${y}-${m}-01`;
 }
 
 function getMonthLabel(off) {
