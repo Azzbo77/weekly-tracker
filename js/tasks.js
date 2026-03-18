@@ -166,24 +166,19 @@ function removeResolved(sec, i) {
   });
 }
 
-const lastCleared = { done: null, cancelled: null };
-
 function clearSec(sec) {
   const w = getOrCreate(currentKey);
   if (w[sec].length === 0) return;
-  lastCleared[sec] = structuredClone(w[sec]);
+  const snapshot = structuredClone(w[sec]);
   w[sec] = [];
   save();
   render();
   showToast(`Cleared all ${sec} tasks.`, 'warning', 'Undo', () => {
-    if (!lastCleared[sec]) return;
-    getOrCreate(currentKey)[sec] = lastCleared[sec];
-    lastCleared[sec] = null;
+    getOrCreate(currentKey)[sec] = snapshot;
     save();
     render();
     showToast('Undo successful \u2014 tasks restored.', 'success', null, null, 3000);
   }, TIMING.TOAST_DEFAULT_DURATION);
-  setTimeout(() => { lastCleared[sec] = null; }, TIMING.TOAST_DEFAULT_DURATION + 2000);
 }
 
 function toggleOngoing(col, i) {
@@ -259,6 +254,8 @@ function saveNote(col, i) {
   const k = col + i;
   const ta = document.getElementById('nte-' + k);
   if (ta) getOrCreate(currentKey)[col][i].note = ta.value;
+  const progInp = document.getElementById('prog-' + k);
+  if (progInp) setProgress(col, i, progInp.value, false);
   editing[k] = false;
   save();
   render();

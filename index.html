@@ -27,11 +27,13 @@
     <button class="btn btn-ic" onclick="changeMonth(-1)" aria-label="Go to previous month">&#8592;</button>
     <span class="wk-lbl" id="wk-lbl"></span>
     <button class="btn btn-ic" onclick="changeMonth(1)" aria-label="Go to next month">&#8594;</button>
+    <button class="btn btn-sm" id="btn-today" onclick="goToCurrentMonth()" aria-label="Go to current month" style="display:none">Today</button>
   </div>
 
   <div id="carry-bar" style="display:none" class="carry">
     <span id="carry-msg"></span>
     <button onclick="carryOver()">Carry incomplete tasks to this month</button>
+    <button onclick="dismissCarry()" style="background:none;border:none;color:var(--info-text);opacity:.6;cursor:pointer;font-size:12px;padding:2px 6px;font-family:'DM Sans',sans-serif" aria-label="Dismiss carry banner">Dismiss</button>
   </div>
 
   <div class="totals">

@@ -75,7 +75,7 @@
       <!-- Priority dot -->
       <div class="priority-dot ${it.priority === 'high' ? 'p-high' : it.priority === 'med' ? 'p-med' : 'p-low'}"
            onclick="cyclePriority('${col}', ${i}); event.stopPropagation();" 
-           title="Click to cycle priority (High / Medium / Low)"></div>
+           title="${it.priority === 'high' ? 'Priority: High \u2014 click to set Medium' : it.priority === 'low' ? 'Priority: Low \u2014 click to set Medium' : 'Priority: Medium \u2014 click to set High'}"></div>
 
       ${taskNameHtml}
       <div class="ibtns">
@@ -245,6 +245,7 @@ function refresh() {
   const w = getOrCreate(currentKey);
   normalizeOrders(w);
   document.getElementById('wk-lbl').textContent = getMonthLabel(monthOffset);
+  _syncTodayBtn();
   ['done', 'cancelled'].forEach(sec => {
     const body = document.getElementById('body-' + sec);
     const tog = document.getElementById('tog-' + sec);

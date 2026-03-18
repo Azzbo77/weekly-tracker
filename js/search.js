@@ -2,7 +2,6 @@
 let _searchTimer = null;
 function debouncedSearch(val) {
   clearTimeout(_searchTimer);
-  if (!val.trim()) { performGlobalSearch(val); return; }
   _searchTimer = setTimeout(() => performGlobalSearch(val), 250);
 }
 
@@ -117,7 +116,7 @@ function dragOver(e) {
 }
 
 function dragLeave(e) {
-  e.currentTarget.classList.remove('drag-over');
+  if (!e.currentTarget.contains(e.relatedTarget)) e.currentTarget.classList.remove('drag-over');
 }
 
 function drop(e) {

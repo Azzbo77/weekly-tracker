@@ -84,8 +84,30 @@ function changeMonth(dir) {
   currentKey = monthKey(monthOffset);
   getOrCreate(currentKey);
   document.getElementById('wk-lbl').textContent = getMonthLabel(monthOffset);
+  _syncTodayBtn();
   save();
   checkCarry();
   render();
+}
+
+function goToCurrentMonth() {
+  if (monthOffset === 0) return;
+  monthOffset = 0;
+  currentKey = monthKey(0);
+  getOrCreate(currentKey);
+  document.getElementById('wk-lbl').textContent = getMonthLabel(0);
+  _syncTodayBtn();
+  save();
+  checkCarry();
+  render();
+}
+
+function dismissCarry() {
+  document.getElementById('carry-bar').style.display = 'none';
+}
+
+function _syncTodayBtn() {
+  const btn = document.getElementById('btn-today');
+  if (btn) btn.style.display = monthOffset === 0 ? 'none' : '';
 }
 
