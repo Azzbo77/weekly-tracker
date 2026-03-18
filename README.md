@@ -1,6 +1,6 @@
 # Monthly Work Tracker
 
-A lightweight, self-contained monthly status tracker for keeping your manager informed. No server, no database, no installation required — just a single HTML file that runs in any browser.
+A lightweight, self-contained monthly status tracker for keeping your manager informed. No server, no database, no installation required — just a small static site that runs in any browser.
 
 ## What it does
 
@@ -35,7 +35,7 @@ This tracker is hosted via GitHub Pages.
 
 ## Running locally
 
-Download `index.html` and open it in any modern browser. No web server or internet connection is required (the Google Font will fall back to a system font if offline).
+Keep `index.html`, `styles.css`, and `app.js` together in the same folder, then open `index.html` in any modern browser. No web server or internet connection is required (the Google Font will fall back to a system font if offline).
 
 Tested in Chrome, Firefox, Safari, and Edge.
 
