@@ -995,10 +995,23 @@ function setProgress(col, i, val, commit = false) {
   updateSummary(getOrCreate(currentKey));
 }
 
+function shiftEditingKeys(col, removedIdx) {
+  [editing, editingName].forEach(map => {
+    const keys = Object.keys(map)
+      .filter(k => k.startsWith(col) && !isNaN(parseInt(k.slice(col.length), 10)))
+      .sort((a, b) => parseInt(a.slice(col.length), 10) - parseInt(b.slice(col.length), 10));
+    keys.forEach(k => {
+      const idx = parseInt(k.slice(col.length), 10);
+      if (idx === removedIdx) delete map[k];
+      else if (idx > removedIdx) { map[col + (idx - 1)] = map[k]; delete map[k]; }
+    });
+  });
+}
+
 function removeItem(col, i) {
   const w = getOrCreate(currentKey);
   const removed = w[col].splice(i, 1)[0];
-  delete editing[col + i];
+  shiftEditingKeys(col, i);
   save();
   render();
   showToast('Task deleted.', 'warning', 'Undo', () => {
@@ -1011,16 +1024,19 @@ function removeItem(col, i) {
 function markDone(col, i) {
   const w = getOrCreate(currentKey);
   const it = w[col].splice(i, 1)[0];
+  shiftEditingKeys(col, i);
   it.completedFrom = col;
   it.completedDate = new Date().toISOString().slice(DATE.ISO_DATE_START, DATE.ISO_DATE_SLICE);
   w.done.push(it);
   save();
   render();
+  launchConfetti();
 }
 
 function markCancelled(col, i) {
   const w = getOrCreate(currentKey);
   const it = w[col].splice(i, 1)[0];
+  shiftEditingKeys(col, i);
   it.cancelledFrom = col;
   w.cancelled.push(it);
   save();
@@ -1031,7 +1047,6 @@ function restoreItem(sec, i) {
   const w = getOrCreate(currentKey);
   const it = w[sec].splice(i, 1)[0];
   const col = it.completedFrom || it.cancelledFrom || 'doing';
-  it.ongoing = false;
   w[col].push(it);
   save();
   render();
@@ -1770,7 +1785,7 @@ function buildPdfHtml(keys,theme){
       if(!items.length)return;
       L.push({type:'heading',text:lbl});
       items.forEach(it=>{
-        const flags=(it.ongoing?' [ongoing]':'')+(it.carried?' [carried]':'');
+        const flags=(it.priority==='high'?' [High Priority]':it.priority==='low'?' [Low Priority]':'')+(it.ongoing?' [ongoing]':'')+(it.carried?' [carried]':'');
         const note=(lbl!=='COMPLETED')?it.note||'':'';
         L.push({type:'item',text:it.text+flags,note:note,col:lbl,progress:it.progress??null,completedDate:it.completedDate??null});
       });
@@ -1806,7 +1821,7 @@ function buildPdfHtml(keys,theme){
         </div>
         <span style="font-size:10px;font-weight:500;color:${colColor[currentCol]};min-width:26px;text-align:right">${pct}%</span>
       </div>`:'';
-      return`<div style="margin-bottom:6px;padding:7px 10px;background:${colBg[currentCol]};border-radius:6px;border-left:3px solid ${colColor[currentCol]};border:.5px solid ${ITEM_BORDER};border-left:3px solid ${colColor[currentCol]}">
+      return`<div style="margin-bottom:6px;padding:7px 10px;background:${colBg[currentCol]};border-radius:6px;border:.5px solid ${ITEM_BORDER};border-left:3px solid ${colColor[currentCol]}">
         <div style="font-size:12px;font-weight:500;color:${TEXT}">${esc(line.text)}</div>
         ${dateDisplay}
         ${pBar}
@@ -1887,6 +1902,7 @@ function performGlobalSearch(query) {
     });
   });
 
+  results.sort((a, b) => b.month.localeCompare(a.month));
   const html = results.length === 0
     ? '<div style="color:var(--text-3);font-style:italic;padding:20px;text-align:center">No matches found.</div>'
     : results.map(r => `
@@ -1899,6 +1915,55 @@ function performGlobalSearch(query) {
 
   document.getElementById('search-results').innerHTML = html;
   openModal('search-modal');
+}
+
+function launchConfetti() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const canvas = document.createElement('canvas');
+  canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999';
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+  const colours = ['#1a7a56','#1a5fa8','#b83232','#9a6200','#6b3fa0','#f0b429','#3ecf8e','#5b9cf6','#f07070','#b07ef5'];
+  const particles = Array.from({length: 130}, () => ({
+    x: Math.random() * canvas.width,
+    y: -10 - Math.random() * 120,
+    w: 7 + Math.random() * 7,
+    h: 4 + Math.random() * 5,
+    color: colours[Math.floor(Math.random() * colours.length)],
+    vx: (Math.random() - 0.5) * 5,
+    vy: 3 + Math.random() * 5,
+    tilt: Math.random() * Math.PI * 2,
+    tiltV: (Math.random() - 0.5) * 0.18,
+    alpha: 1
+  }));
+  const start = performance.now();
+  function tick(now) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const elapsed = now - start;
+    let alive = false;
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.tilt += p.tiltV;
+      p.vy += 0.13;
+      if (elapsed > 1800) p.alpha = Math.max(0, p.alpha - 0.022);
+      if (p.alpha > 0) {
+        alive = true;
+        ctx.save();
+        ctx.globalAlpha = p.alpha;
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.tilt);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      }
+    });
+    if (alive && elapsed < 4000) requestAnimationFrame(tick);
+    else canvas.remove();
+  }
+  requestAnimationFrame(tick);
 }
 
 // Global variable to track what is being dragged
