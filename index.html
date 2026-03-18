@@ -514,7 +514,12 @@
 <div class="modal-bg" id="import-modal" role="dialog" aria-modal="true" aria-labelledby="import-modal-title">
   <div class="modal">
     <div class="modal-title" id="import-modal-title">Import JSON</div>
-    <div class="modal-sub">Paste a previously exported JSON file to restore your data. This will overwrite your current data.</div>
+    <div class="modal-sub">Upload or paste a previously exported JSON file to restore your data. This will overwrite your current data.</div>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
+      <input type="file" id="import-file" accept=".json,application/json" style="display:none" />
+      <button class="btn" id="import-upload-btn" type="button">Upload JSON file</button>
+      <span style="font-size:12px;color:var(--text-3)">or paste below</span>
+    </div>
     <textarea id="import-ta" placeholder="Paste exported JSON here…"></textarea>
     <div class="modal-acts">
       <button class="btn" id="import-cancel-btn">Cancel</button>
@@ -681,6 +686,11 @@ document.addEventListener('DOMContentLoaded', () => {
   setupModal('help-modal','help-close-btn');
   setupModal('import-modal','import-cancel-btn');
   document.getElementById('import-confirm-btn').addEventListener('click', doImport);
+  document.getElementById('import-upload-btn').addEventListener('click', () => {
+    const fileInput = document.getElementById('import-file');
+    if (fileInput) fileInput.click();
+  });
+  document.getElementById('import-file').addEventListener('change', handleImportFileSelect);
   document.querySelectorAll('input[name="pdf-range"]').forEach(r => r.addEventListener('change', onPdfRangeChange));
 
   document.addEventListener('click', e => {
@@ -694,6 +704,22 @@ function openModal(id) { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 function openHelp() { openModal('help-modal'); }
 function openImport() { openModal('import-modal'); }
+
+function handleImportFileSelect(e) {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    const raw = typeof reader.result === 'string' ? reader.result : '';
+    document.getElementById('import-ta').value = raw;
+    showToast('File loaded. Click Import to apply it.', 'info', null, null, 3000);
+  };
+  reader.onerror = () => {
+    showToast('Could not read that file. Please try another JSON file.', 'error');
+  };
+  reader.readAsText(file);
+}
 
 // ── Persistence ───────────────────────────────────────────
 function save() {
@@ -809,6 +835,8 @@ function doImport() {
   } finally {
     importBtn.textContent = origText;
     importBtn.disabled = false;
+    const fileInput = document.getElementById('import-file');
+    if (fileInput) fileInput.value = '';
   }
 }
 
