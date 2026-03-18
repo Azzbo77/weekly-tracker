@@ -321,7 +321,7 @@
   </div>
 
   <div class="hint-row">
-    <span class="hint">&#10003; complete &nbsp;&#10007; cancel &nbsp;&#9671; ongoing &nbsp;&#43;&#9650; note &nbsp;● click dot for priority</span>
+    <span class="hint">&#10003; complete &nbsp;&#10007; cancel &nbsp;&#9671; ongoing &nbsp;&#9998; note &nbsp;● click dot for priority</span>
   </div>
 
   <div class="cols">
@@ -536,8 +536,7 @@
 <script>
 // ── State ─────────────────────────────────────────────────
 const weeks = {}, COLS = ['doing', 'planned', 'blocked'];
-const COL_LABELS = { doing: 'In progress', planned: 'Planned', blocked: 'Blocked' };
-const COL_COLORS = { doing: 'var(--green)', planned: 'var(--blue)', blocked: 'var(--red)' };
+
 const secOpen = { done: true, cancelled: true };
 const editing = {}, editingName = {};
 let currentKey = '', monthOffset = 0;
@@ -632,12 +631,18 @@ function showToast(message, type = 'info', actionLabel = null, actionFn = null, 
   t.setAttribute('role', 'alert');
   t.setAttribute('aria-live', 'polite');
   t.className = 'toast';
-  t.style.cssText = `background:${c.bg};color:${c.text};`;
-  t.innerHTML = `<span style="flex:1">${message}</span>` +
-    (actionLabel ? `<button class="toast-action-btn" style="background:${c.btn};color:${c.text};">${actionLabel}</button>` : '');
-  t.style.display = 'flex';
-  t.style.alignItems = 'center';
-  t.style.gap = '12px';
+  t.style.cssText = `background:${c.bg};color:${c.text};display:flex;align-items:center;gap:12px;`;
+  const msgSpan = document.createElement('span');
+  msgSpan.style.flex = '1';
+  msgSpan.textContent = message;
+  t.appendChild(msgSpan);
+  if (actionLabel) {
+    const btn = document.createElement('button');
+    btn.className = 'toast-action-btn';
+    btn.style.cssText = `background:${c.btn};color:${c.text};`;
+    btn.textContent = actionLabel;
+    t.appendChild(btn);
+  }
   document.body.appendChild(t);
 
   if (actionLabel && actionFn) {
@@ -702,6 +707,7 @@ function save() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ months: toSave, monthOffset }));
   } catch (e) {
     console.warn('Failed to save data to localStorage', e);
+    showToast('Could not save — storage may be full. Export your data to avoid losing it.', 'error', null, null, 8000);
   }
 }
 
@@ -741,7 +747,9 @@ function exportData() {
   const a = document.createElement('a');
   a.href = URL.createObjectURL(b);
   a.download = 'monthly-tracker-' + new Date().toISOString().slice(DATE.ISO_DATE_START, DATE.ISO_DATE_SLICE) + '.json';
+  document.body.appendChild(a);
   a.click();
+  document.body.removeChild(a);
   URL.revokeObjectURL(a.href);
 }
 
@@ -813,9 +821,8 @@ function monthKey(off) {
 function getMonthLabel(off) {
   const now = new Date();
   const mon = new Date(now.getFullYear(), now.getMonth() + off, 1);
-  const fmt = d => formatMonthYear(d);
   const s = off === 0 ? ' (this month)' : off === -1 ? ' (last month)' : off === 1 ? ' (next month)' : '';
-  return `${fmt(mon)}${s}`;
+  return formatMonthYear(mon) + s;
 }
 
 function getMonthLabelFromKey(k) {
@@ -1024,9 +1031,8 @@ function restoreItem(sec, i) {
   const w = getOrCreate(currentKey);
   const it = w[sec].splice(i, 1)[0];
   const col = it.completedFrom || it.cancelledFrom || 'doing';
-  const cloned = structuredClone(it);
-  cloned.ongoing = false;
-  w[col].push(cloned);
+  it.ongoing = false;
+  w[col].push(it);
   save();
   render();
 }
@@ -1545,8 +1551,10 @@ function render() {
 
   normalizeOrders(getOrCreate(currentKey));
 
-  // Allow dropping on empty column containers
-  document.querySelectorAll('.items').forEach(container => {
+  // Allow dropping on empty active column containers only (not done/cancelled)
+  COLS.forEach(col => {
+    const container = document.getElementById('list-' + col);
+    if (!container) return;
     container.ondragover = e => {
       e.preventDefault();
       container.classList.add('drag-over');
@@ -1555,18 +1563,12 @@ function render() {
     container.ondrop = e => {
       e.preventDefault();
       container.classList.remove('drag-over');
-      
       if (!draggedItem) return;
-      
       const fromCol = draggedItem.dataset.col;
-      const toCol = container.id.replace('list-', '');
-      
-      if (fromCol === toCol) return;
-      
+      if (fromCol === col) return;
       const w = getOrCreate(currentKey);
       const [movedTask] = w[fromCol].splice(parseInt(draggedItem.dataset.index), 1);
-      w[toCol].push(movedTask);   // append to bottom of empty column
-      
+      w[col].push(movedTask);
       save();
       render();
     };
@@ -1649,7 +1651,6 @@ function copyUpdate() {
 }
 
 function init() {
-  monthOffset = 0;
   refresh();
 }
 
@@ -1736,11 +1737,10 @@ function generatePdf() {
  */
 function buildPdfHtml(keys,theme){
   const colors=theme==='light'?PDF_THEMES.light:PDF_THEMES.dark;
-  const {BG,TEXT,TEXT2,TEXT3,DIVIDER,TITLE_LINE,GREEN,GREEN_BG,BLUE,BLUE_BG,RED,RED_BG,AMBER,AMBER_BG,GREY,GREY_BG,PURPLE,PURPLE_BG,ITEM_BORDER}=colors;
+  const {BG,TEXT,TEXT2,TEXT3,DIVIDER,TITLE_LINE,GREEN,GREEN_BG,BLUE,BLUE_BG,RED,RED_BG,AMBER,AMBER_BG,GREY,GREY_BG,ITEM_BORDER}=colors;
   
   // Note: dates in notes won't be styled specially in PDF, just rendered as plain text
 
-  function badge(text,color,bg){return `<span style="font-size:9px;font-weight:500;background:${bg};color:${color};border-radius:4px;padding:1px 6px;margin-left:5px;vertical-align:middle;display:inline-block">${text}</span>`;}
   function noteHtml(raw){
     if(!raw)return'';
     const lines=raw.split('\n');let html='',inList=false;
@@ -1757,30 +1757,6 @@ function buildPdfHtml(keys,theme){
     });
     if(inList)html+='</ul>';
     return html?`<div style="margin-top:4px;padding-top:4px;border-top:0.5px solid ${DIVIDER}">${html}</div>`:'';
-  }
-
-  function section(label,color,bg,items,showFlags){
-    if(!items.length)return'';
-    const rows=items.map(it=>{
-      const flags=(showFlags&&it.ongoing?badge('ongoing',PURPLE,PURPLE_BG):'')+(it.carried?badge('carried',BLUE,BLUE_BG):'');
-      const pct=it.progress!==null&&it.progress!==undefined?it.progress:null;
-      const pColor=pct===100?GREEN:pct>=50?BLUE:AMBER;
-      const pBar=pct!==null?`<div style="margin-top:5px;display:flex;align-items:center;gap:8px">
-        <div style="flex:1;height:4px;background:${ITEM_BORDER};border-radius:2px;overflow:hidden">
-          <div style="width:${pct}%;height:100%;background:${pColor};border-radius:2px"></div>
-        </div>
-        <span style="font-size:10px;font-weight:500;color:${pColor};min-width:26px;text-align:right">${pct}%</span>
-      </div>`:'';
-      return`<div style="margin-bottom:6px;padding:7px 10px;background:${bg};border-radius:6px;border-left:3px solid ${color};border:.5px solid ${ITEM_BORDER};border-left:3px solid ${color}">
-        <div style="font-size:12px;font-weight:500;color:${TEXT}">${esc(it.text)}${flags}</div>
-        ${pBar}
-        ${noteHtml(it.note||'')}
-      </div>`;
-    }).join('');
-    return`<div style="margin-bottom:14px">
-      <div style="font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:${color};margin-bottom:6px;padding-bottom:4px;border-bottom:1.5px solid ${color}">${label}</div>
-      ${rows}
-    </div>`;
   }
 
   const weekSections=keys.map(k=>{
