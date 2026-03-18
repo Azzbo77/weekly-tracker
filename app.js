@@ -882,13 +882,18 @@ function render() {
     container.ondragleave = () => container.classList.remove('drag-over');
     container.ondrop = e => {
       e.preventDefault();
+      e.stopPropagation();
       container.classList.remove('drag-over');
       if (!draggedItem) return;
       const fromCol = draggedItem.dataset.col;
       if (fromCol === col) return;
       const w = getOrCreate(currentKey);
-      const [movedTask] = w[fromCol].splice(parseInt(draggedItem.dataset.index), 1);
+      const idx = parseInt(draggedItem.dataset.index);
+      if (isNaN(idx) || idx < 0 || idx >= w[fromCol].length) return;
+      const [movedTask] = w[fromCol].splice(idx, 1);
+      if (!movedTask) return;
       w[col].push(movedTask);
+      normalizeOrders(w);
       save();
       render();
     };
@@ -1297,6 +1302,7 @@ function dragLeave(e) {
 
 function drop(e) {
   e.preventDefault();
+  e.stopPropagation(); // Prevent event bubbling to the container drop handler
   const target = e.currentTarget;
   target.classList.remove('drag-over');
 
@@ -1307,7 +1313,10 @@ function drop(e) {
   const toCol = target.dataset.col;
   const toIdx = parseInt(target.dataset.index);
 
+  if (isNaN(fromIdx) || isNaN(toIdx)) return;
+
   const w = getOrCreate(currentKey);
+  if (fromIdx < 0 || fromIdx >= w[fromCol].length) return;
   const [moved] = w[fromCol].splice(fromIdx, 1);
   const insertIdx = (fromCol === toCol && toIdx > fromIdx) ? toIdx - 1 : toIdx;
   w[toCol].splice(insertIdx, 0, moved);
