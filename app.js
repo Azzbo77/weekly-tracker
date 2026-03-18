@@ -1,135 +1,3 @@
-// ── State ─────────────────────────────────────────────────
-const weeks = {}, COLS = ['doing', 'planned', 'blocked'];
-
-const secOpen = { done: true, cancelled: true };
-const editing = {}, editingName = {};
-let currentKey = '', monthOffset = 0;
-
-// ── Storage keys ──────────────────────────────────────────
-const STORAGE_KEY = 'wt8';
-const STORAGE_THEME = 'wt8_theme';
-const STORAGE_SEC = 'wt8_sec';
-
-// ── Constants ─────────────────────────────────────────────
-const TIMING = {
-  TOAST_DEFAULT_DURATION: 10000,
-  COPY_CONFIRMATION_FADE: 2000,
-  PDF_PRINT_DIALOG_DELAY: 600,
-  ASYNC_TASK_SCHEDULE: 0,
-};
-const DATE = {
-  PADSTART_LENGTH: 2,
-  YEAR_SLICE_LENGTH: 2,
-  ISO_DATE_SLICE: 10,
-  ISO_MONTH_SLICE: 7,
-  ISO_DATE_START: 0,
-};
-const CALENDAR = {
-  GRID_COLUMNS: 7,
-  GRID_TOTAL_CELLS: 42,
-};
-const MARKUP = {
-  STRIKETHROUGH_DELIMITER: 2,
-  STRIKETHROUGH_MIN_LENGTH: 4,
-  BULLET_PREFIX_LENGTH: 2,
-  COL_IDENTIFIER_LENGTH: 2,
-};
-const LOCALE = 'en-GB';
-
-// ── Date formatting helpers ──────────────────────────────
-/**
- * Formats a date as month and year (e.g., "March 2026" in UK English).
- * @param {Date} date - Date to format
- * @returns {string} Formatted date string
- */
-function formatMonthYear(date) {
-  return date.toLocaleDateString(LOCALE, { month: 'long', year: 'numeric' });
-}
-
-/**
- * Formats a date as day, month and year (e.g., "18 March 2026" in UK English).
- * @param {Date} date - Date to format
- * @returns {string} Formatted date string
- */
-function formatFullDate(date) {
-  return date.toLocaleDateString(LOCALE, { day: 'numeric', month: 'long', year: 'numeric' });
-}
-
-/**
- * Formats a date with weekday, day, month and year (e.g., "Tuesday, 18 March 2026" in UK English).
- * @param {Date} date - Date to format
- * @returns {string} Formatted date string
- */
-function formatFullDateWithWeekday(date) {
-  return date.toLocaleDateString(LOCALE, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-}
-
-// ── DOM helper functions ──────────────────────────────────
-/**
- * Closes all open modals and dropdown menus by removing the 'open' class.
- * @returns {void}
- */
-function closeAllOpenElements() {
-  document.querySelectorAll('.mv-menu.open, .date-picker.open').forEach(el => el.classList.remove('open'));
-}
-
-/**
- * Removes all toast notification elements from the DOM.
- * @returns {void}
- */
-function clearAllToasts() {
-  document.querySelectorAll('.toast').forEach(el => el.remove());
-}
-
-// ── Toast notifications ───────────────────────────────────
-function showToast(message, type = 'info', actionLabel = null, actionFn = null, duration = TIMING.TOAST_DEFAULT_DURATION) {
-  const colors = {
-    success: { bg: 'var(--green)', text: '#fff', btn: 'rgba(255,255,255,0.2)' },
-    warning: { bg: 'var(--amber)', text: '#fff', btn: 'rgba(255,255,255,0.2)' },
-    error:   { bg: 'var(--red)',   text: '#fff', btn: 'rgba(255,255,255,0.2)' },
-    info:    { bg: 'var(--blue)',  text: '#fff', btn: 'rgba(255,255,255,0.2)' },
-  };
-  const c = colors[type] || colors.info;
-  clearAllToasts();
-  const t = document.createElement('div');
-  t.setAttribute('role', 'alert');
-  t.setAttribute('aria-live', 'polite');
-  t.className = 'toast';
-  t.style.cssText = `background:${c.bg};color:${c.text};display:flex;align-items:center;gap:12px;`;
-  const msgSpan = document.createElement('span');
-  msgSpan.style.flex = '1';
-  msgSpan.textContent = message;
-  t.appendChild(msgSpan);
-  if (actionLabel) {
-    const btn = document.createElement('button');
-    btn.className = 'toast-action-btn';
-    btn.style.cssText = `background:${c.btn};color:${c.text};`;
-    btn.textContent = actionLabel;
-    t.appendChild(btn);
-  }
-  document.body.appendChild(t);
-
-  if (actionLabel && actionFn) {
-    const btn = t.querySelector('button');
-    btn.addEventListener('click', () => { actionFn(); t.remove(); });
-  }
-  if (duration > 0) setTimeout(() => { if (t.parentNode) t.remove(); }, duration);
-}
-
-// ── Theme colors for PDF export ───────────────────────────
-const PDF_THEMES = {
-  light: { BG:'#ffffff',TEXT:'#1a1917',TEXT2:'#6b6860',TEXT3:'#a8a49e',DIVIDER:'#e0ddd8',
-    GREEN:'#1a7a56',GREEN_BG:'#e8f5ef',BLUE:'#1a5fa8',BLUE_BG:'#e8f0fb',
-    RED:'#b83232',RED_BG:'#fbeaea',AMBER:'#9a6200',AMBER_BG:'#fef3db',
-    GREY:'#6b6860',GREY_BG:'#f0ede8',PURPLE:'#6b3fa0',PURPLE_BG:'#f0eafa',
-    TITLE_LINE:'#1a1917',ITEM_BORDER:'rgba(0,0,0,0.06)' },
-  dark: { BG:'#141312',TEXT:'#f0ede8',TEXT2:'#9e9a94',TEXT3:'#5c5955',DIVIDER:'rgba(255,255,255,0.12)',
-    GREEN:'#3ecf8e',GREEN_BG:'#0e2a1e',BLUE:'#5b9cf6',BLUE_BG:'#0d1f3c',
-    RED:'#f07070',RED_BG:'#2d1212',AMBER:'#f0b429',AMBER_BG:'#2a1f05',
-    GREY:'#9e9a94',GREY_BG:'#272523',PURPLE:'#b07ef5',PURPLE_BG:'#1e1030',
-    TITLE_LINE:'#f0ede8',ITEM_BORDER:'rgba(255,255,255,0.07)' }
-};
-
 // ── Modal wiring ──────────────────────────────────────────
 function setupModal(modalId, cancelBtnId, confirmHandler) {
   const m = document.getElementById(modalId);
@@ -178,53 +46,6 @@ function handleImportFileSelect(e) {
   };
   reader.readAsText(file);
 }
-
-// ── Persistence ───────────────────────────────────────────
-function save() {
-  try {
-    const toSave = {};
-    Object.keys(weeks).forEach(k => {
-      const w = weeks[k];
-      if (w.doing.length + w.planned.length + w.blocked.length + w.done.length + w.cancelled.length > 0) {
-        toSave[k] = w;
-      }
-    });
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ months: toSave, monthOffset }));
-  } catch (e) {
-    console.warn('Failed to save data to localStorage', e);
-    showToast('Could not save — storage may be full. Export your data to avoid losing it.', 'error', null, null, 8000);
-  }
-}
-
-function load() {
-  try {
-    const r = localStorage.getItem(STORAGE_KEY);
-    if (!r) return;
-    const d = JSON.parse(r);
-
-    if (d.months && typeof d.months === 'object') Object.assign(weeks, d.months);
-    else if (d.weeks && typeof d.weeks === 'object') Object.assign(weeks, d.weeks);
-
-    if (typeof d.monthOffset === 'number') monthOffset = d.monthOffset;
-    else if (typeof d.weekOffset === 'number') monthOffset = d.weekOffset;
-  } catch (e) {
-    console.warn('Failed to load data from localStorage', e);
-  }
-}
-
-// ── Theme ─────────────────────────────────────────────────
-function toggleTheme() {
-  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
-  document.documentElement.setAttribute('data-theme', dark ? '' : 'dark');
-  try { localStorage.setItem(STORAGE_THEME, dark ? 'light' : 'dark'); } catch (e) {}
-}
-(function () {
-  try {
-    if (localStorage.getItem(STORAGE_THEME) === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
-    const savedSec = localStorage.getItem(STORAGE_SEC);
-    if (savedSec) Object.assign(secOpen, JSON.parse(savedSec));
-  } catch (e) {}
-})();
 
 // ── Export / Import ───────────────────────────────────────
 function exportData() {
@@ -908,9 +729,6 @@ function noteToUpdateLines(raw) {
     });
 }
 
-// ── Render ────────────────────────────────────────────────
-function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-
 /**
  * Renders an individual task item as HTML with action buttons, editors, and metadata.
  * Handles both expanded (editing) and collapsed states, including note editor and progress bar.
@@ -1453,9 +1271,6 @@ function launchConfetti() {
   requestAnimationFrame(tick);
 }
 
-// Global variable to track what is being dragged
-let draggedItem = null;
-
 function dragStart(e) {
   draggedItem = e.currentTarget;
   e.currentTarget.classList.add('dragging');
@@ -1504,4 +1319,5 @@ function drop(e) {
 
 // Run once everything is defined
 load();
-init();
+init();
+

@@ -35,7 +35,7 @@ This tracker is hosted via GitHub Pages.
 
 ## Running locally
 
-Keep `index.html`, `styles.css`, and `app.js` together in the same folder, then open `index.html` in any modern browser. No web server or internet connection is required (the Google Font will fall back to a system font if offline).
+Keep `index.html`, `styles.css`, `app.js`, and the `js/` folder together in the same project structure, then open `index.html` in any modern browser. No web server or internet connection is required (the Google Font will fall back to a system font if offline).
 
 Tested in Chrome, Firefox, Safari, and Edge.
 
