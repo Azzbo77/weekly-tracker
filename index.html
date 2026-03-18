@@ -105,31 +105,35 @@
 
   /* note editor */
   .note-ed{margin-top:6px;border:.5px solid var(--border-mid);border-radius:var(--rs);overflow:visible}
-  .note-tb{display:flex;gap:2px;padding:4px 6px;background:var(--surface);border-bottom:.5px solid var(--border)}
+  .note-tb{display:flex;gap:2px;padding:4px 6px;background:var(--surface);border-bottom:.5px solid var(--border);position:relative}
   .ntb-btn{background:none;border:none;cursor:pointer;color:var(--text-2);font-size:12px;padding:3px 7px;border-radius:4px;font-family:'DM Sans',sans-serif;line-height:1.2;transition:background .1s,color .1s;font-weight:400}
   .ntb-btn:hover{background:var(--surface2);color:var(--text)}
   .ntb-sep{width:.5px;background:var(--border-mid);margin:2px 4px}
   .note-area{width:100%;font-size:12px;border:none;padding:7px 9px;background:var(--surface);color:var(--text);resize:vertical;min-height:60px;font-family:'DM Sans',sans-serif;outline:none;display:block;font-weight:400}
-  .note-ft{display:flex;flex-direction:column;gap:6px;padding:6px 8px;background:var(--surface);border-top:.5px solid var(--border)}
-  .note-ft-actions{display:flex;align-items:center;justify-content:space-between}
-  .note-hint{font-size:10px;color:var(--text-3)}
+  .note-ft{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+  .note-ft-actions{display:flex;gap:8px;align-items:center}
+  .note-hint{font-size:11px;color:var(--text-3);font-style:italic}
   .note-sv{font-size:11px;padding:3px 10px;background:var(--text);color:var(--bg);border:none;border-radius:var(--rs);cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:400}
   .note-sv:hover{opacity:.85}
 
   /* rendered note */
-  .note-view{font-size:12px;font-weight:400;color:var(--text-2);margin-top:5px;padding-top:5px;border-top:.5px solid var(--border);line-height:1.6;word-break:break-word}
+  .note-view{font-size:12px;font-weight:400;color:var(--text-2);margin-top:6px;padding-top:5px;border-top:.5px solid var(--border);line-height:1.6;word-break:break-word}
   .note-view ul{list-style:disc;padding-left:16px;margin:2px 0}
   .note-view li{margin:1px 0}
   .note-view s{color:var(--text-3)}
+  .note-view-wrapper{position:relative;margin-top:5px;padding-top:5px;border-top:.5px solid var(--border)}
+  .note-hide-btn{background:none;border:none;cursor:pointer;color:var(--text-2);font-size:13px;padding:3px 6px;border-radius:4px;font-family:'DM Sans',sans-serif;position:absolute;top:5px;right:0;opacity:0;transition:opacity .15s,color .15s;font-weight:400}
+  .note-hide-btn:hover{color:var(--text)}
+  .note-view-wrapper:hover .note-hide-btn{opacity:1}
 
   /* progress */
   .prog-wrap{margin-top:5px;display:flex;align-items:center;gap:8px}
   .prog-bar-bg{flex:1;height:5px;background:var(--border-mid);border-radius:3px;overflow:hidden}
   .prog-bar-fill{height:100%;border-radius:3px;transition:width .2s}
   .prog-pct{font-size:11px;font-weight:500;color:var(--text-2);min-width:28px;text-align:right}
-  .prog-input-wrap{margin-top:6px;display:flex;align-items:center;gap:8px}
+  .prog-input-wrap{display:flex;align-items:center;gap:6px}
   .prog-input-wrap label{font-size:11px;color:var(--text-2)}
-  .prog-input{width:60px;font-size:12px;border:.5px solid var(--border-mid);border-radius:var(--rs);padding:3px 7px;background:var(--surface);color:var(--text);font-family:'DM Sans',sans-serif;outline:none;text-align:center}
+  .prog-input{width:50px;font-size:12px;border:.5px solid var(--border);border-radius:var(--rs);padding:3px 6px;background:var(--surface);color:var(--text);outline:none}
   .prog-input:focus{border-color:var(--blue)}
 
   /* add row */
@@ -184,7 +188,6 @@
   .toast{position:fixed;bottom:24px;right:24px;z-index:300;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.25);display:flex;align-items:center;gap:16px;max-width:380px;padding:12px 20px;font-size:13px;font-weight:500}
 
   /* date picker */
-  .note-tb{position:relative}
   .date-picker{position:absolute;top:100%;left:0;background:var(--surface);border:.5px solid var(--border-mid);border-radius:var(--rs);box-shadow:0 4px 16px rgba(0,0,0,.25);z-index:250;padding:14px;display:none;flex-direction:column;gap:10px;width:280px;max-width:90vw}
   .date-picker.open{display:flex}
   .dp-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;padding-bottom:8px;border-bottom:.5px solid var(--border)}
@@ -261,6 +264,27 @@
   .p-high { background: var(--red); border-color: var(--red); }
   .p-med  { background: var(--amber); border-color: var(--amber); }
   .p-low  { background: var(--grey); }
+
+  /* Form & Input styles */
+  .form-label { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-2); cursor: pointer; }
+  .form-input-radio { accent-color: var(--blue); }
+  .form-label-section { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .form-section-title { font-size: 12px; font-weight: 500; color: var(--text-2); margin-bottom: 8px; }
+  
+  /* Search input */
+  .search-input { width: 180px; padding: 5px 9px; font-size: 13px; border: .5px solid var(--border-mid); border-radius: var(--rs); background: var(--surface); color: var(--text); outline: none; }
+  
+  /* Toast action button */
+  .toast-action-btn { background: rgba(255,255,255,0.2); color: inherit; border: 1px solid rgba(255,255,255,0.4); padding: 5px 12px; border-radius: 5px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 12px; white-space: nowrap; }
+  
+  /* Modal form styles */
+  .modal-months { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .modal-picker { display: none; margin-bottom: 16px; max-height: 180px; overflow-y: auto; border: .5px solid var(--border-mid); border-radius: var(--rs); padding: 8px; background: var(--surface2); flex-direction: column; gap: 6px; }
+  .modal-appearance { display: flex; gap: 10px; margin-bottom: 4px; }
+  
+  /* Date picker wrapper */
+  .date-picker-wrapper { position: relative; display: inline-block; }
+  .ntb-strike { text-decoration: line-through; }
 </style>
 </head>
 <body>
@@ -273,7 +297,7 @@
       <button class="btn btn-sm" onclick="exportData()" aria-label="Export all data as JSON file">Export JSON</button>
       <button class="btn btn-sm" onclick="openImport()" aria-label="Import previously exported JSON">Import JSON</button>
       <button class="btn btn-ic" onclick="toggleTheme()" title="Toggle dark mode" aria-label="Toggle light/dark theme">&#9788;</button>
-      <input type="text" id="global-search" placeholder="Search all tasks…" style="width:180px;padding:5px 9px;font-size:13px;border:.5px solid var(--border-mid);border-radius:var(--rs);background:var(--surface);color:var(--text);outline:none;" oninput="performGlobalSearch(this.value)">
+      <input type="search" id="global-search" placeholder="Search all tasks…" class="search-input" oninput="debouncedSearch(this.value)">
     </div>
   </div>
 
@@ -302,17 +326,17 @@
 
   <div class="cols">
     <div class="col">
-      <div class="col-hd"><div class="col-dot c-do"></div><div><div class="col-title">In progress</div><div class="col-sub">What I'm working on this month</div></div></div>
+      <div class="col-hd"><div class="col-dot c-do"></div><div><div class="col-title">In progress</div><div class="col-sub">What I'm working on this month</div></div><button class="btn btn-sm" style="margin-left:auto" onclick="sortColumnByPriority('doing')" title="Sort by priority (High → Med → Low)">↕ Priority</button></div>
       <div class="items" id="list-doing"></div>
       <div class="add-row"><input class="add-in" id="in-doing" placeholder="Add task…" onkeydown="if(event.key==='Enter')addItem('doing')"><button class="add-btn" onclick="addItem('doing')">+</button></div>
     </div>
     <div class="col">
-      <div class="col-hd"><div class="col-dot c-pl"></div><div><div class="col-title">Planned</div><div class="col-sub">Coming up this month</div></div></div>
+      <div class="col-hd"><div class="col-dot c-pl"></div><div><div class="col-title">Planned</div><div class="col-sub">Coming up this month</div></div><button class="btn btn-sm" style="margin-left:auto" onclick="sortColumnByPriority('planned')" title="Sort by priority (High → Med → Low)">↕ Priority</button></div>
       <div class="items" id="list-planned"></div>
       <div class="add-row"><input class="add-in" id="in-planned" placeholder="Add task…" onkeydown="if(event.key==='Enter')addItem('planned')"><button class="add-btn" onclick="addItem('planned')">+</button></div>
     </div>
     <div class="col">
-      <div class="col-hd"><div class="col-dot c-bl"></div><div><div class="col-title">Blocked</div><div class="col-sub">Use notes to explain the blocker</div></div></div>
+      <div class="col-hd"><div class="col-dot c-bl"></div><div><div class="col-title">Blocked</div><div class="col-sub">Use notes to explain the blocker</div></div><button class="btn btn-sm" style="margin-left:auto" onclick="sortColumnByPriority('blocked')" title="Sort by priority (High → Med → Low)">↕ Priority</button></div>
       <div class="items" id="list-blocked"></div>
       <div class="add-row"><input class="add-in" id="in-blocked" placeholder="Add blocker…" onkeydown="if(event.key==='Enter')addItem('blocked')"><button class="add-btn" onclick="addItem('blocked')">+</button></div>
     </div>
@@ -355,26 +379,26 @@
   <div class="modal" style="width:420px" onclick="event.stopPropagation()">
     <div class="modal-title" id="pdf-modal-title">Export as PDF</div>
     <div class="modal-sub">Choose which months to include and how the report should look.</div>
-    <div style="font-size:12px;font-weight:500;color:var(--text-2);margin-bottom:8px">Months</div>
-    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
-      <label style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-2);cursor:pointer">
-        <input type="radio" name="pdf-range" value="current" checked style="accent-color:var(--blue)"> Current month only
+    <div class="form-section-title">Months</div>
+    <div class="form-label-section">
+      <label class="form-label">
+        <input type="radio" name="pdf-range" value="current" checked class="form-input-radio"> Current month only
       </label>
-      <label style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-2);cursor:pointer">
-        <input type="radio" name="pdf-range" value="all" style="accent-color:var(--blue)"> All months with data
+      <label class="form-label">
+        <input type="radio" name="pdf-range" value="all" class="form-input-radio"> All months with data
       </label>
-      <label style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-2);cursor:pointer">
-        <input type="radio" name="pdf-range" value="pick" style="accent-color:var(--blue)"> Choose specific months
+      <label class="form-label">
+        <input type="radio" name="pdf-range" value="pick" class="form-input-radio"> Choose specific months
       </label>
     </div>
-    <div id="pdf-week-picker" style="display:none;margin-bottom:16px;max-height:180px;overflow-y:auto;border:.5px solid var(--border-mid);border-radius:var(--rs);padding:8px;background:var(--surface2);flex-direction:column;gap:6px"></div>
-    <div style="font-size:12px;font-weight:500;color:var(--text-2);margin-bottom:8px">Appearance</div>
-    <div style="display:flex;gap:10px;margin-bottom:4px">
-      <label style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-2);cursor:pointer">
-        <input type="radio" name="pdf-theme" value="light" checked style="accent-color:var(--blue)"> Light
+    <div id="pdf-week-picker" class="modal-picker"></div>
+    <div class="form-section-title">Appearance</div>
+    <div class="modal-appearance">
+      <label class="form-label">
+        <input type="radio" name="pdf-theme" value="light" checked class="form-input-radio"> Light
       </label>
-      <label style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-2);cursor:pointer">
-        <input type="radio" name="pdf-theme" value="dark" style="accent-color:var(--blue)"> Dark
+      <label class="form-label">
+        <input type="radio" name="pdf-theme" value="dark" class="form-input-radio"> Dark
       </label>
     </div>
     <div class="modal-acts">
@@ -405,9 +429,10 @@
       <div class="h-grid">
         <div class="h-ic">✓</div><div class="h-ds">Mark as complete.</div>
         <div class="h-ic">✕</div><div class="h-ds">Mark as cancelled.</div>
-        <div class="h-ic">◉ / ◯</div><div class="h-ds">Toggle ongoing (carries forward automatically).</div>
+        <div class="h-ic">◉ / ◯</div><div class="h-ds">Mark as ongoing (labels long-term work that may span multiple months).</div>
         <div class="h-ic">✎</div><div class="h-ds">Add or edit notes, bullets, dates or progress.</div>
         <div class="h-ic">●</div><div class="h-ds">Click the coloured dot to set priority (High / Medium / Low).</div>
+        <div class="h-ic">↕ Priority</div><div class="h-ds">Click the sort button in any column header to sort that column by High → Medium → Low. Your manual drag order is preserved and can be changed again afterwards.</div>
       </div>
     </div>
 
@@ -443,6 +468,19 @@
     </div>
 
     <div class="h-sec">
+      <div class="h-hd">Month-to-Month Carry-over</div>
+      <div class="h-p">
+        When you move to a new month, a banner appears showing incomplete tasks from previous months. Click 'Carry incomplete tasks to this month' to bring them forward. All incomplete tasks (ongoing or not) can be carried.
+      </div>
+      <div class="h-p">
+        The 'ongoing' tag is purely a label to mark long-term work. It doesn't auto-repeat — you decide each month which tasks to carry through the banner.
+      </div>
+      <div class="h-p">
+        Completed and cancelled tasks stay in their original month and do not carry forward.
+      </div>
+    </div>
+
+    <div class="h-sec">
       <div class="h-hd">Other Features</div>
       <div class="h-grid">
         <div class="h-ic">↔︎</div>
@@ -460,7 +498,8 @@
       <div class="h-hd">Tips</div>
       <div class="h-p">• Double-click a task name to rename it quickly.</div>
       <div class="h-p">• Completed tasks at 100% progress move automatically to Completed.</div>
-      <div class="h-p">• Ongoing tasks carry forward to the next month automatically.</div>
+      <div class="h-p">• Use ↕ Priority in any column header to sort that column. Manual order is preserved and drag reordering still works after sorting.</div>
+      <div class="h-p">• Mark tasks as 'ongoing' to label them as long-term work. Use the carry banner to decide what moves to the next month.</div>
       <div class="h-p">• Use the search box (top right) to find tasks across all months.</div>
     </div>
 
@@ -506,9 +545,81 @@ let currentKey = '', monthOffset = 0;
 // ── Storage keys ──────────────────────────────────────────
 const STORAGE_KEY = 'wt8';
 const STORAGE_THEME = 'wt8_theme';
+const STORAGE_SEC = 'wt8_sec';
+
+// ── Constants ─────────────────────────────────────────────
+const TIMING = {
+  TOAST_DEFAULT_DURATION: 10000,
+  COPY_CONFIRMATION_FADE: 2000,
+  PDF_PRINT_DIALOG_DELAY: 600,
+  ASYNC_TASK_SCHEDULE: 0,
+};
+const DATE = {
+  PADSTART_LENGTH: 2,
+  YEAR_SLICE_LENGTH: 2,
+  ISO_DATE_SLICE: 10,
+  ISO_MONTH_SLICE: 7,
+  ISO_DATE_START: 0,
+};
+const CALENDAR = {
+  GRID_COLUMNS: 7,
+  GRID_TOTAL_CELLS: 42,
+};
+const MARKUP = {
+  STRIKETHROUGH_DELIMITER: 2,
+  STRIKETHROUGH_MIN_LENGTH: 4,
+  BULLET_PREFIX_LENGTH: 2,
+  COL_IDENTIFIER_LENGTH: 2,
+};
+const LOCALE = 'en-GB';
+
+// ── Date formatting helpers ──────────────────────────────
+/**
+ * Formats a date as month and year (e.g., "March 2026" in UK English).
+ * @param {Date} date - Date to format
+ * @returns {string} Formatted date string
+ */
+function formatMonthYear(date) {
+  return date.toLocaleDateString(LOCALE, { month: 'long', year: 'numeric' });
+}
+
+/**
+ * Formats a date as day, month and year (e.g., "18 March 2026" in UK English).
+ * @param {Date} date - Date to format
+ * @returns {string} Formatted date string
+ */
+function formatFullDate(date) {
+  return date.toLocaleDateString(LOCALE, { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+/**
+ * Formats a date with weekday, day, month and year (e.g., "Tuesday, 18 March 2026" in UK English).
+ * @param {Date} date - Date to format
+ * @returns {string} Formatted date string
+ */
+function formatFullDateWithWeekday(date) {
+  return date.toLocaleDateString(LOCALE, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+// ── DOM helper functions ──────────────────────────────────
+/**
+ * Closes all open modals and dropdown menus by removing the 'open' class.
+ * @returns {void}
+ */
+function closeAllOpenElements() {
+  document.querySelectorAll('.mv-menu.open, .date-picker.open').forEach(el => el.classList.remove('open'));
+}
+
+/**
+ * Removes all toast notification elements from the DOM.
+ * @returns {void}
+ */
+function clearAllToasts() {
+  document.querySelectorAll('.toast').forEach(el => el.remove());
+}
 
 // ── Toast notifications ───────────────────────────────────
-function showToast(message, type = 'info', actionLabel = null, actionFn = null, duration = 10000) {
+function showToast(message, type = 'info', actionLabel = null, actionFn = null, duration = TIMING.TOAST_DEFAULT_DURATION) {
   const colors = {
     success: { bg: 'var(--green)', text: '#fff', btn: 'rgba(255,255,255,0.2)' },
     warning: { bg: 'var(--amber)', text: '#fff', btn: 'rgba(255,255,255,0.2)' },
@@ -516,14 +627,14 @@ function showToast(message, type = 'info', actionLabel = null, actionFn = null, 
     info:    { bg: 'var(--blue)',  text: '#fff', btn: 'rgba(255,255,255,0.2)' },
   };
   const c = colors[type] || colors.info;
-  document.querySelectorAll('.toast').forEach(el => el.remove());
+  clearAllToasts();
   const t = document.createElement('div');
   t.setAttribute('role', 'alert');
   t.setAttribute('aria-live', 'polite');
   t.className = 'toast';
   t.style.cssText = `background:${c.bg};color:${c.text};`;
   t.innerHTML = `<span style="flex:1">${message}</span>` +
-    (actionLabel ? `<button style="background:${c.btn};color:${c.text};border:1px solid rgba(255,255,255,0.4);padding:5px 12px;border-radius:5px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;white-space:nowrap">${actionLabel}</button>` : '');
+    (actionLabel ? `<button class="toast-action-btn" style="background:${c.btn};color:${c.text};">${actionLabel}</button>` : '');
   t.style.display = 'flex';
   t.style.alignItems = 'center';
   t.style.gap = '12px';
@@ -568,8 +679,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.addEventListener('click', e => {
     if (!e.target.closest('.mv-menu') && !e.target.closest('.dp-btn') && !e.target.closest('button.ntb-btn')) {
-      document.querySelectorAll('.mv-menu.open').forEach(m => m.classList.remove('open'));
-      document.querySelectorAll('.date-picker.open').forEach(p => p.classList.remove('open'));
+      closeAllOpenElements();
     }
   });
 });
@@ -582,7 +692,14 @@ function openImport() { openModal('import-modal'); }
 // ── Persistence ───────────────────────────────────────────
 function save() {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ months: weeks, monthOffset }));
+    const toSave = {};
+    Object.keys(weeks).forEach(k => {
+      const w = weeks[k];
+      if (w.doing.length + w.planned.length + w.blocked.length + w.done.length + w.cancelled.length > 0) {
+        toSave[k] = w;
+      }
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ months: toSave, monthOffset }));
   } catch (e) {
     console.warn('Failed to save data to localStorage', e);
   }
@@ -613,6 +730,8 @@ function toggleTheme() {
 (function () {
   try {
     if (localStorage.getItem(STORAGE_THEME) === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+    const savedSec = localStorage.getItem(STORAGE_SEC);
+    if (savedSec) Object.assign(secOpen, JSON.parse(savedSec));
   } catch (e) {}
 })();
 
@@ -621,11 +740,17 @@ function exportData() {
   const b = new Blob([JSON.stringify({ months: weeks, monthOffset }, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(b);
-  a.download = 'monthly-tracker-' + new Date().toISOString().slice(0, 10) + '.json';
+  a.download = 'monthly-tracker-' + new Date().toISOString().slice(DATE.ISO_DATE_START, DATE.ISO_DATE_SLICE) + '.json';
   a.click();
   URL.revokeObjectURL(a.href);
 }
 
+/**
+ * Imports and processes exported JSON data, replacing current local storage.
+ * Handles migration from weekly to monthly format automatically.
+ * Validates data structure and displays appropriate error/success messages.
+ * @returns {void}
+ */
 function doImport() {
   const importBtn = document.getElementById('import-confirm-btn');
   const origText = importBtn.textContent;
@@ -643,58 +768,59 @@ function doImport() {
 
     if (Object.keys(data).length === 0) throw new Error('No valid tracker data found');
 
-    Object.keys(weeks).forEach(k => delete weeks[k]);
-
-    // Migration: weekly → monthly
+    // Stage new data before touching existing data — prevents data loss on error
+    const newData = {};
     Object.keys(data).forEach(key => {
-      let monthKey = key;
+      let mk = key;
       if (/^\d{4}-\d{2}-\d{2}$/.test(key)) {
-        monthKey = key.slice(0, 7) + '-01';
+        mk = key.slice(DATE.ISO_DATE_START, DATE.ISO_MONTH_SLICE) + '-01';
       }
-      if (!weeks[monthKey]) weeks[monthKey] = { doing: [], planned: [], blocked: [], done: [], cancelled: [] };
+      if (!newData[mk]) newData[mk] = { doing: [], planned: [], blocked: [], done: [], cancelled: [] };
 
       const src = data[key];
-      const dest = weeks[monthKey];
+      const dest = newData[mk];
 
-      COLS.forEach(col => { if (Array.isArray(src[col])) dest[col].push(...src[col]); });
-      if (Array.isArray(src.done)) dest.done.push(...src.done);
-      if (Array.isArray(src.cancelled)) dest.cancelled.push(...src.cancelled);
+      COLS.forEach(col => { if (Array.isArray(src[col])) dest[col].push(...src[col].map(item => structuredClone(item))); });
+      if (Array.isArray(src.done)) dest.done.push(...src.done.map(item => structuredClone(item)));
+      if (Array.isArray(src.cancelled)) dest.cancelled.push(...src.cancelled.map(item => structuredClone(item)));
     });
 
+    // Only clear and replace once staging succeeded
+    Object.keys(weeks).forEach(k => delete weeks[k]);
+    Object.assign(weeks, newData);
     monthOffset = offset;
     save();
     closeModal('import-modal');
     document.getElementById('import-ta').value = '';
-    init();
+    refresh();
     showToast('Data imported successfully.', 'success');
   } catch (e) {
-    importBtn.textContent = origText;
-    importBtn.disabled = false;
     showToast('Import failed: ' + e.message, 'error');
     console.error(e);
+  } finally {
+    importBtn.textContent = origText;
+    importBtn.disabled = false;
   }
-  importBtn.textContent = origText;
-  importBtn.disabled = false;
 }
 
 // ── Month helpers ─────────────────────────────────────────
 function monthKey(off) {
   const now = new Date();
   const mon = new Date(now.getFullYear(), now.getMonth() + off, 1);
-  return mon.toISOString().slice(0, 7) + '-01';
+  return mon.toISOString().slice(DATE.ISO_DATE_START, DATE.ISO_MONTH_SLICE) + '-01';
 }
 
 function getMonthLabel(off) {
   const now = new Date();
   const mon = new Date(now.getFullYear(), now.getMonth() + off, 1);
-  const fmt = d => d.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+  const fmt = d => formatMonthYear(d);
   const s = off === 0 ? ' (this month)' : off === -1 ? ' (last month)' : off === 1 ? ' (next month)' : '';
   return `${fmt(mon)}${s}`;
 }
 
 function getMonthLabelFromKey(k) {
   const mon = new Date(k + 'T00:00:00');
-  return mon.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+  return formatMonthYear(mon);
 }
 
 function getOrCreate(k) {
@@ -724,6 +850,12 @@ function checkCarry() {
   } else bar.style.display = 'none';
 }
 
+/**
+ * Manually carries incomplete tasks from previous months to the current month.
+ * All tasks (ongoing or not) can be carried. Removes them from source months.
+ * Updates order values to ensure consistency. Called when user clicks 'Carry' banner.
+ * @returns {void}
+ */
 function carryOver() {
   const prev = Object.keys(weeks).filter(k => k < currentKey).sort();
   const cur = getOrCreate(currentKey);
@@ -733,10 +865,11 @@ function carryOver() {
     const w = weeks[k];
     COLS.forEach(col => {
       w[col].forEach(it => {
-        if (!it.ongoing) {
-          cur[col].unshift({ ...it, carried: true, order: undefined, priority: it.priority || 'med' });
-          carriedCount++;
-        }
+        const cloned = structuredClone(it);
+        cloned.carried = true;
+        cloned.order = undefined;
+        cur[col].unshift(cloned);
+        carriedCount++;
       });
       w[col] = [];
     });
@@ -749,23 +882,8 @@ function carryOver() {
   if (carriedCount > 0) showToast(`Carried ${carriedCount} task${carriedCount > 1 ? 's' : ''} to this month.`, 'success');
 }
 
-function autoCarryOngoing(fk, tk) {
-  const from = weeks[fk]; if (!from) return;
-  const to = getOrCreate(tk);
-  let added = false;
-  COLS.forEach(col => from[col].filter(it => it.ongoing && !it.carried).forEach(it => {
-    if (!COLS.some(c => to[c].some(x => x.text === it.text && (x.ongoing || x.carried)))) {
-      to[col].push({ text: it.text, note: it.note || '', carried: true, ongoing: true, progress: it.progress || null, priority: it.priority || 'med', order: undefined, completedDate: undefined });
-      added = true;
-    }
-  }));
-  if (added) normalizeOrders(to);  // Set proper order values
-}
-
 function changeMonth(dir) {
-  const old = monthKey(monthOffset);
   monthOffset += dir;
-  if (dir > 0) autoCarryOngoing(old, monthKey(monthOffset));
   currentKey = monthKey(monthOffset);
   getOrCreate(currentKey);
   document.getElementById('wk-lbl').textContent = getMonthLabel(monthOffset);
@@ -775,7 +893,36 @@ function changeMonth(dir) {
 }
 
 // ── Item actions ──────────────────────────────────────────
+/**
+ * Sorts tasks in a column by priority level (High → Medium → Low).
+ * Within each priority tier, maintains the existing manual order.
+ * @param {Array<Object>} tasks - Array of task objects from a column
+ * @returns {Array<Object>} Sorted tasks array (modifies in place and returns)
+ */
+function sortByPriority(tasks) {
+  const priorityOrder = { high: 0, med: 1, low: 2 };
+  return tasks.sort((a, b) => {
+    const aPrio = priorityOrder[a.priority || 'med'] ?? 1;
+    const bPrio = priorityOrder[b.priority || 'med'] ?? 1;
+    return aPrio - bPrio;
+  });
+}
+
+function sortColumnByPriority(col) {
+  const w = getOrCreate(currentKey);
+  sortByPriority(w[col]);
+  normalizeOrders(w);
+  save();
+  render();
+}
+
 // Assign consistent order values (0, 1, 2...) to all tasks in a month
+/**
+ * Assigns consistent order values (0, 1, 2...) to all tasks in a month.
+ * Ensures stable ordering when tasks are added, reordered, or moved between columns.
+ * @param {Object} w - Week/month object containing {doing, planned, blocked, done, cancelled} arrays
+ * @returns {void}
+ */
 function normalizeOrders(w) {
   COLS.forEach(col => {
     w[col].forEach((task, idx) => {
@@ -858,7 +1005,7 @@ function markDone(col, i) {
   const w = getOrCreate(currentKey);
   const it = w[col].splice(i, 1)[0];
   it.completedFrom = col;
-  it.completedDate = new Date().toISOString().slice(0, 10);
+  it.completedDate = new Date().toISOString().slice(DATE.ISO_DATE_START, DATE.ISO_DATE_SLICE);
   w.done.push(it);
   save();
   render();
@@ -877,7 +1024,9 @@ function restoreItem(sec, i) {
   const w = getOrCreate(currentKey);
   const it = w[sec].splice(i, 1)[0];
   const col = it.completedFrom || it.cancelledFrom || 'doing';
-  w[col].push({ text: it.text, note: it.note || '', carried: it.carried || false, ongoing: false });
+  const cloned = structuredClone(it);
+  cloned.ongoing = false;
+  w[col].push(cloned);
   save();
   render();
 }
@@ -894,24 +1043,24 @@ function removeResolved(sec, i) {
   });
 }
 
-let lastCleared = null;
+const lastCleared = { done: null, cancelled: null };
 
 function clearSec(sec) {
   const w = getOrCreate(currentKey);
   if (w[sec].length === 0) return;
-  lastCleared = { section: sec, items: [...w[sec]] };
+  lastCleared[sec] = structuredClone(w[sec]);
   w[sec] = [];
   save();
   render();
   showToast(`Cleared all ${sec} tasks.`, 'warning', 'Undo', () => {
-    if (!lastCleared) return;
-    getOrCreate(currentKey)[lastCleared.section] = lastCleared.items;
-    lastCleared = null;
+    if (!lastCleared[sec]) return;
+    getOrCreate(currentKey)[sec] = lastCleared[sec];
+    lastCleared[sec] = null;
     save();
     render();
     showToast('Undo successful — tasks restored.', 'success', null, null, 3000);
-  }, 5000);
-  setTimeout(() => lastCleared = null, 10000);
+  }, TIMING.TOAST_DEFAULT_DURATION);
+  setTimeout(() => { lastCleared[sec] = null; }, TIMING.TOAST_DEFAULT_DURATION + 2000);
 }
 
 function toggleOngoing(col, i) {
@@ -945,7 +1094,7 @@ function toggleEditName(col, i) {
       const inp = document.getElementById('itxt-' + k);
       if (inp) {
         inp.focus();
-        inp.setSelectionRange(0, inp.value.length);
+        inp.setSelectionRange(DATE.ISO_DATE_START, inp.value.length);
       }
     }, 0);
   }
@@ -979,7 +1128,7 @@ function toggleNote(col, i) {
         ta.focus();
         ta.setSelectionRange(ta.value.length, ta.value.length);
       }
-    }, 0);
+    }, TIMING.ASYNC_TASK_SCHEDULE);
   }
 }
 
@@ -996,6 +1145,21 @@ function toggleSec(sec) {
   secOpen[sec] = !secOpen[sec];
   document.getElementById('body-' + sec).style.display = secOpen[sec] ? 'block' : 'none';
   document.getElementById('tog-' + sec).innerHTML = secOpen[sec] ? '&#9660;' : '&#9654;';
+  try { localStorage.setItem(STORAGE_SEC, JSON.stringify(secOpen)); } catch(e) {}
+}
+
+/**
+ * Toggles the hideCompleted flag on a task, hiding strikethrough lines in the note view.
+ * Persists the preference in localStorage.
+ * @param {string} col - Column identifier ('doing', 'planned', 'blocked', etc)
+ * @param {number} i - Zero-based index of the task within its column
+ * @returns {void}
+ */
+function toggleHideCompleted(col, i) {
+  const task = getOrCreate(currentKey)[col][i];
+  task.hideCompleted = !task.hideCompleted;
+  save();
+  render();
 }
 
 // ── Note formatting ───────────────────────────────────────
@@ -1040,8 +1204,8 @@ function insertStrike(id) {
   const ta = document.getElementById(id); if (!ta) return;
   const s = ta.selectionStart, e = ta.selectionEnd, val = ta.value, sel = val.substring(s, e);
   if (sel) {
-    if (sel.startsWith('~~') && sel.endsWith('~~') && sel.length > 4) {
-      const u = sel.slice(2, -2);
+    if (sel.startsWith('~~') && sel.endsWith('~~') && sel.length > MARKUP.STRIKETHROUGH_MIN_LENGTH) {
+      const u = sel.slice(MARKUP.STRIKETHROUGH_DELIMITER, -MARKUP.STRIKETHROUGH_DELIMITER);
       ta.value = val.substring(0, s) + u + val.substring(e);
       ta.selectionStart = s;
       ta.selectionEnd = s + u.length;
@@ -1060,7 +1224,7 @@ function insertStrike(id) {
   ta.focus();
 }
 
-let datePickerState = { taId: null, curDate: new Date() };
+const datePickerState = { taId: null, curDate: new Date() };
 
 function toggleDatePicker(taId) {
   const picker = document.getElementById('dp-' + taId);
@@ -1068,7 +1232,7 @@ function toggleDatePicker(taId) {
     picker.classList.remove('open');
     datePickerState.taId = null;
   } else {
-    document.querySelectorAll('.date-picker.open').forEach(p => p.classList.remove('open'));
+    closeAllOpenElements();
     datePickerState.taId = taId;
     datePickerState.curDate = new Date();
     renderDatePicker(taId);
@@ -1106,27 +1270,28 @@ function renderDatePicker(taId) {
   }
   for (let i = 1; i <= last.getDate(); i++) {
     const d = new Date(year, month, i);
-    const isToday = d.toISOString().slice(0,10) === new Date().toISOString().slice(0,10);
+    const isToday = d.toISOString().slice(DATE.ISO_DATE_START, DATE.ISO_DATE_SLICE) === new Date().toISOString().slice(DATE.ISO_DATE_START, DATE.ISO_DATE_SLICE);
     html += `<div class="dp-day${isToday?' today':''}" role="gridcell" tabindex="0"
       data-year="${year}" data-month="${month}" data-day="${i}"
       data-taid="${taId}"
       onclick="selectDate('${taId}',${year},${month},${i})"
       onkeydown="handleDpKeydown(event,'${taId}')"
-      aria-label="${d.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}"
+      aria-label="${formatFullDate(d)}"
       ${isToday?'aria-current="date"':''}>${i}</div>`;
   }
-  const endDays = 42 - last.getDate() - startDay;
+  const endDays = CALENDAR.GRID_TOTAL_CELLS - last.getDate() - startDay;
   for (let i = 1; i <= endDays; i++) html += `<div class="dp-day other-month" role="gridcell" aria-disabled="true">${i}</div>`;
   html += `</div>`;
   picker.innerHTML = html;
   setTimeout(() => {
     const focused = picker.querySelector('.dp-day.today') || picker.querySelector('.dp-day:not(.other-month)');
     if (focused) focused.focus();
-  }, 0);
+  }, TIMING.ASYNC_TASK_SCHEDULE);
 }
 
 function changeDateMonth(dir, taId) {
-  datePickerState.curDate.setMonth(datePickerState.curDate.getMonth() + dir);
+  const d = datePickerState.curDate;
+  datePickerState.curDate = new Date(d.getFullYear(), d.getMonth() + dir, 1);
   renderDatePicker(taId);
 }
 
@@ -1134,9 +1299,9 @@ function selectDate(taId, year, month, day) {
   const ta = document.getElementById(taId); if (!ta) return;
   const d = new Date(year, month, day);
   if (d.getMonth() !== month) return; // invalid day guard
-  const dateStr = String(d.getDate()).padStart(2,'0') + '/' +
-                  String(d.getMonth()+1).padStart(2,'0') + '/' +
-                  String(d.getFullYear()).slice(-2);
+  const dateStr = String(d.getDate()).padStart(DATE.PADSTART_LENGTH,'0') + '/' +
+                  String(d.getMonth()+1).padStart(DATE.PADSTART_LENGTH,'0') + '/' +
+                  String(d.getFullYear()).slice(-DATE.YEAR_SLICE_LENGTH);
   const pos = ta.selectionStart, val = ta.value;
   ta.value = val.substring(0, pos) + dateStr + val.substring(pos);
   ta.selectionStart = ta.selectionEnd = pos + dateStr.length;
@@ -1161,21 +1326,21 @@ function handleDpKeydown(e, taId) {
   let next = -1;
   if (key === 'ArrowLeft') next = idx - 1;
   else if (key === 'ArrowRight') next = idx + 1;
-  else if (key === 'ArrowUp') next = idx - 7;
-  else if (key === 'ArrowDown') next = idx + 7;
+  else if (key === 'ArrowUp') next = idx - CALENDAR.GRID_COLUMNS;
+  else if (key === 'ArrowDown') next = idx + CALENDAR.GRID_COLUMNS;
 
   if (next < 0) {
     changeDateMonth(-1, taId);
     setTimeout(() => {
       const newCells = document.getElementById('dp-' + taId).querySelectorAll('.dp-day:not(.other-month)');
       if (newCells.length) newCells[newCells.length-1].focus();
-    }, 0);
+    }, TIMING.ASYNC_TASK_SCHEDULE);
   } else if (next >= cells.length) {
     changeDateMonth(1, taId);
     setTimeout(() => {
       const newCells = document.getElementById('dp-' + taId).querySelectorAll('.dp-day:not(.other-month)');
       if (newCells.length) newCells[0].focus();
-    }, 0);
+    }, TIMING.ASYNC_TASK_SCHEDULE);
   } else {
     cells[next].focus();
   }
@@ -1188,12 +1353,17 @@ document.addEventListener('keydown', e => {
   }
 });
 
-function renderNoteHtml(raw) {
+function renderNoteHtml(raw, hideCompleted = false) {
   if (!raw) return '';
   const lines = raw.split('\n');
   let html = '', inList = false;
   lines.forEach(line => {
-    const fmt = line.replace(/~~(.*?)~~/g, '<s>$1</s>');
+    // If hideCompleted is true, skip lines that are entirely struck through
+    if (hideCompleted && /^~~.*~~$/.test(line.trim())) {
+      return;
+    }
+    const escaped = esc(line);
+    const fmt = escaped.replace(/~~(.*?)~~/g, '<s>$1</s>');
     if (line.startsWith('• ') || line === '•') {
       if (!inList) { html += '<ul>'; inList = true; }
       html += `<li>${fmt.replace(/^•\s*/,'')}</li>`;
@@ -1206,6 +1376,12 @@ function renderNoteHtml(raw) {
   return html.replace(/(<br>)+$/, '');
 }
 
+/**
+ * Transforms raw note text into formatted lines for the manager update summary.
+ * Converts bullet points (•) to dashes, removes strikethrough, and filters empty lines.
+ * @param {string} raw - Raw note text containing bullet points and strikethrough formatting
+ * @returns {Array<string>} Array of formatted text lines ready for summary display
+ */
 function noteToUpdateLines(raw) {
   if (!raw) return [];
   return raw.split('\n')
@@ -1214,19 +1390,27 @@ function noteToUpdateLines(raw) {
     .map(line => {
       // Remove leading bullet if present and replace with dash for notes
       if (line.startsWith('• ')) {
-        return `- ${line.slice(2)}`;
+        return `- ${line.slice(MARKUP.BULLET_PREFIX_LENGTH)}`;
       }
       if (line.startsWith('•')) {
         return `- ${line.slice(1).trim()}`;
       }
       // Remove strikethrough for clean output
-      return line.replace(/~~(.*?)~~/g, '$1 [done]');
+      return line.replace(/~~(.*?)~~/g, '$1 [Done]');
     });
 }
 
 // ── Render ────────────────────────────────────────────────
-function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
+/**
+ * Renders an individual task item as HTML with action buttons, editors, and metadata.
+ * Handles both expanded (editing) and collapsed states, including note editor and progress bar.
+ * @param {string} col - Column identifier ('doing', 'planned', 'blocked')
+ * @param {Object} it - Task item object containing {text, note, progress, priority, ongoing, carried, etc}
+ * @param {number} i - Zero-based index of the task within its column
+ * @returns {string} HTML string ready to insert into the DOM
+ */
 function renderItem(col, it, i) {
   const k = col + i;
   const isEd = editing[k];
@@ -1247,9 +1431,9 @@ function renderItem(col, it, i) {
       <div class="note-tb">
         <button class="ntb-btn" onclick="insertBullet('${tid}')">• List</button>
         <div class="ntb-sep"></div>
-        <button class="ntb-btn" style="text-decoration:line-through" onclick="insertStrike('${tid}')">S</button>
+        <button class="ntb-btn ntb-strike" onclick="insertStrike('${tid}')">S</button>
         <div class="ntb-sep"></div>
-        <div style="position:relative;display:inline-block">
+        <div class="date-picker-wrapper">
           <button class="ntb-btn" onclick="toggleDatePicker('${tid}')" title="Insert date">📅</button>
           <div class="date-picker" id="dp-${tid}"></div>
         </div>
@@ -1272,7 +1456,16 @@ function renderItem(col, it, i) {
       </div>
     </div>`;
   } else if (it.note) {
-    noteHtml = `<div class="note-view">${renderNoteHtml(it.note)}</div>`;
+    const hasStrikethrough = /~~/.test(it.note);
+    const hideCompletedBtn = hasStrikethrough ? 
+      `<button class="note-hide-btn" title="${it.hideCompleted ? 'Show completed items' : 'Hide completed items'}" 
+               onclick="toggleHideCompleted('${col}',${i}); event.stopPropagation();">
+        👁
+      </button>` : '';
+    noteHtml = `<div class="note-view-wrapper">
+      <div class="note-view">${renderNoteHtml(it.note, it.hideCompleted)}</div>
+      ${hasStrikethrough ? hideCompletedBtn : ''}
+    </div>`;
   }
 
   const taskNameHtml = isEdName ?
@@ -1282,7 +1475,7 @@ function renderItem(col, it, i) {
       ${esc(it.text)}${tags}
     </span>`;
 
-  return `<div class="item i-${col.slice(0,2)}" 
+  return `<div class="item i-${col.slice(DATE.ISO_DATE_START, MARKUP.COL_IDENTIFIER_LENGTH)}" 
                ${isEd || isEdName ? '' : 'draggable="true"'}
                data-col="${col}" 
                data-index="${i}"
@@ -1305,9 +1498,9 @@ function renderItem(col, it, i) {
                 onclick="toggleOngoing('${col}',${i})" style="${it.ongoing ? 'color:var(--purple)' : ''}">
           ${it.ongoing ? '&#9670;' : '&#9671;'}
         </button>
-        <button class="ibt" title="${isEd ? 'Cancel note' : 'Add or edit note'}" 
+        <button class="ibt" title="${isEd ? 'Close note editor' : 'Add or edit note'}" 
                 onclick="toggleNote('${col}',${i})">
-          ${isEd ? '&#x2715;' : '&#9998;'}
+          ${isEd ? '&#9650;' : '&#9998;'}
         </button>
         <button class="ibt del" title="Delete permanently" onclick="removeItem('${col}',${i})">&#x2715;</button>
       </div>
@@ -1380,6 +1573,13 @@ function render() {
   });
 }
 
+/**
+ * Generates the manager update summary text from all tasks in the current month.
+ * Organises tasks by status with indented notes underneath each task.
+ * Called after render to update the summary box.
+ * @param {Object} w - Month object containing task arrays {doing, planned, blocked, done, cancelled}
+ * @returns {void}
+ */
 function updateSummary(w) {
   const total = w.doing.length + w.planned.length + w.blocked.length + w.done.length + w.cancelled.length;
   const el = document.getElementById('summary');
@@ -1396,6 +1596,13 @@ function updateSummary(w) {
   L.push(`Summary: ${w.doing.length} in progress, ${w.planned.length} planned, ${w.blocked.length} blocked, ${w.done.length} completed, ${w.cancelled.length} cancelled`);
   L.push('');
 
+  /**
+   * Formats a section of tasks for the summary (e.g., IN PROGRESS, PLANNED).
+   * Adds task titles with priority/flags and indented notes underneath.
+   * @param {string} title - Section heading (e.g., 'IN PROGRESS', 'COMPLETED')
+   * @param {Array<Object>} items - Array of task items to display in this section
+   * @returns {void}
+   */
   function addSection(title, items) {
     if (items.length === 0) return;
     L.push(title);
@@ -1403,7 +1610,6 @@ function updateSummary(w) {
       // Main task title
       let line = ` • ${it.text}`;
       if (it.priority === 'high') line += ' [High Priority]';
-      else if (it.priority === 'med') line += ' [Medium Priority]';
       else if (it.priority === 'low') line += ' [Low Priority]';
 
       if (it.ongoing) line += ' [ongoing]';
@@ -1438,16 +1644,26 @@ function copyUpdate() {
   navigator.clipboard.writeText(txt).then(() => {
     const el = document.getElementById('copy-ok');
     el.classList.add('show');
-    setTimeout(() => el.classList.remove('show'), 2000);
-  });
+    setTimeout(() => el.classList.remove('show'), TIMING.COPY_CONFIRMATION_FADE);
+  }).catch(() => showToast('Copy failed — please copy the text manually.', 'error', null, null, 4000));
 }
 
 function init() {
   monthOffset = 0;
+  refresh();
+}
+
+function refresh() {
   currentKey = monthKey(monthOffset);
   const w = getOrCreate(currentKey);
-  normalizeOrders(w);        // Ensure all tasks have order
+  normalizeOrders(w);
   document.getElementById('wk-lbl').textContent = getMonthLabel(monthOffset);
+  ['done', 'cancelled'].forEach(sec => {
+    const body = document.getElementById('body-' + sec);
+    const tog = document.getElementById('tog-' + sec);
+    if (body) body.style.display = secOpen[sec] ? 'block' : 'none';
+    if (tog) tog.innerHTML = secOpen[sec] ? '&#9660;' : '&#9654;';
+  });
   checkCarry();
   render();
 }
@@ -1455,7 +1671,8 @@ function init() {
 // ── PDF Export ────────────────────────────────────────────
 function openPdfExport() {
   document.querySelector('input[name="pdf-range"][value="current"]').checked = true;
-  document.querySelector('input[name="pdf-theme"][value="light"]').checked = true;
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  document.querySelector(`input[name="pdf-theme"][value="${isDark ? 'dark' : 'light'}"]`).checked = true;
   document.getElementById('pdf-week-picker').style.display = 'none';
   openModal('pdf-modal');
 }
@@ -1495,10 +1712,11 @@ function generatePdf() {
   closeModal('pdf-modal');
   const html = buildPdfHtml(keys, theme);
   const win = window.open('', '_blank');
+  if (!win) { showToast('Popup blocked. Please allow popups and try again.', 'warning'); return; }
   win.document.write(html);
   win.document.close();
   win.focus();
-  setTimeout(() => { win.print(); }, 600);
+  setTimeout(() => { win.print(); }, TIMING.PDF_PRINT_DIALOG_DELAY);
 }
 // buildPdfHtml — generates a self-contained HTML document for printing/saving as PDF.
 // Opens in a new tab; the browser's native print dialog handles PDF conversion.
@@ -1508,8 +1726,16 @@ function generatePdf() {
 // The @media print block sets -webkit-print-color-adjust:exact so browsers don't
 // strip background colours when saving to PDF (user still needs "Background graphics"
 // ticked in the Chrome print dialog for dark mode to render correctly).
+/**
+ * Generates a self-contained HTML document for PDF export with inline styles.
+ * Creates a printable report with all tasks grouped by month and status.
+ * Handles colour themes and applies exact colour rendering for PDF output.
+ * @param {Array<string>} keys - Array of month keys (YYYY-MM-01 format) to include
+ * @param {string} theme - Theme identifier: 'light' or 'dark'
+ * @returns {string} Complete HTML document as a string
+ */
 function buildPdfHtml(keys,theme){
-  const colors=PDF_THEMES[theme]==='light'?PDF_THEMES.light:PDF_THEMES.dark;
+  const colors=theme==='light'?PDF_THEMES.light:PDF_THEMES.dark;
   const {BG,TEXT,TEXT2,TEXT3,DIVIDER,TITLE_LINE,GREEN,GREEN_BG,BLUE,BLUE_BG,RED,RED_BG,AMBER,AMBER_BG,GREY,GREY_BG,PURPLE,PURPLE_BG,ITEM_BORDER}=colors;
   
   // Note: dates in notes won't be styled specially in PDF, just rendered as plain text
@@ -1519,7 +1745,8 @@ function buildPdfHtml(keys,theme){
     if(!raw)return'';
     const lines=raw.split('\n');let html='',inList=false;
     lines.forEach(line=>{
-      const fmt=line.replace(/~~(.*?)~~/g,`<s style="color:${TEXT3}">$1</s>`);
+      const escaped=esc(line);
+      const fmt=escaped.replace(/~~(.*?)~~/g,`<s style="color:${TEXT3}">$1</s>`);
       if(line.startsWith('• ')||line==='•'){
         if(!inList){html+=`<ul style="margin:3px 0 3px 16px;padding:0">`;inList=true;}
         html+=`<li style="margin:1px 0;font-size:11px;color:${TEXT2}">${fmt.replace(/^•\s*/,'')}</li>`;
@@ -1625,7 +1852,7 @@ function buildPdfHtml(keys,theme){
   }).join('');
 
   const now=new Date();
-  const generated=now.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const generated=formatFullDateWithWeekday(now);
 
   return`<!DOCTYPE html><html lang="en-GB"><head><meta charset="UTF-8">
   <title>Monthly Update</title>
@@ -1651,19 +1878,36 @@ function buildPdfHtml(keys,theme){
 }
 
 // ── Global search ─────────────────────────────────────────
+let _searchTimer = null;
+function debouncedSearch(val) {
+  clearTimeout(_searchTimer);
+  if (!val.trim()) { performGlobalSearch(val); return; }
+  _searchTimer = setTimeout(() => performGlobalSearch(val), 250);
+}
+
+/**
+ * Searches all months and tasks for a matching query string.
+ * Searches both task titles and note content (case-insensitive).
+ * Displays results in a modal sorted by month.
+ * @param {string} query - Search term entered by user
+ * @returns {void}
+ */
 function performGlobalSearch(query) {
   if (!query.trim()) {
     closeModal('search-modal');
     return;
   }
   const results = [];
+  const STATUS_LABELS = { doing: 'In progress', planned: 'Planned', blocked: 'Blocked', done: 'Completed', cancelled: 'Cancelled' };
   Object.keys(weeks).forEach(k => {
     const w = weeks[k];
-    [...w.doing, ...w.planned, ...w.blocked, ...w.done, ...w.cancelled].forEach(it => {
-      if (it.text.toLowerCase().includes(query.toLowerCase()) ||
-          (it.note && it.note.toLowerCase().includes(query.toLowerCase()))) {
-        results.push({ month: k, item: it, monthLabel: getMonthLabelFromKey(k) });
-      }
+    [...COLS, 'done', 'cancelled'].forEach(col => {
+      (w[col] || []).forEach(it => {
+        if (it.text.toLowerCase().includes(query.toLowerCase()) ||
+            (it.note && it.note.toLowerCase().includes(query.toLowerCase()))) {
+          results.push({ month: k, item: it, monthLabel: getMonthLabelFromKey(k), col });
+        }
+      });
     });
   });
 
@@ -1671,9 +1915,9 @@ function performGlobalSearch(query) {
     ? '<div style="color:var(--text-3);font-style:italic;padding:20px;text-align:center">No matches found.</div>'
     : results.map(r => `
       <div style="padding:10px;border-bottom:.5px solid var(--border);">
-        <div style="font-size:12px;color:var(--text-3);margin-bottom:4px">${r.monthLabel}</div>
+        <div style="font-size:12px;color:var(--text-3);margin-bottom:4px">${r.monthLabel} · ${STATUS_LABELS[r.col] || r.col}</div>
         <div style="font-weight:500">${esc(r.item.text)}</div>
-        ${r.item.note ? `<div style="font-size:12px;color:var(--text-2);margin-top:6px">${esc(renderNoteHtml(r.item.note).slice(0,200))}${r.item.note.length>200?'…':''}</div>` : ''}
+        ${r.item.note ? `<div style="font-size:12px;color:var(--text-2);margin-top:6px">${renderNoteHtml(r.item.note.slice(0,200))}${r.item.note.length>200?'…':''}</div>` : ''}
       </div>
     `).join('');
 
@@ -1722,14 +1966,8 @@ function drop(e) {
 
   const w = getOrCreate(currentKey);
   const [moved] = w[fromCol].splice(fromIdx, 1);
-
-  if (fromCol === toCol) {
-    // Reorder in same column
-    w[toCol].splice(toIdx, 0, moved);
-  } else {
-    // Move to different column
-    w[toCol].splice(toIdx, 0, moved);
-  }
+  const insertIdx = (fromCol === toCol && toIdx > fromIdx) ? toIdx - 1 : toIdx;
+  w[toCol].splice(insertIdx, 0, moved);
 
   normalizeOrders(w);   // Important: re-assign order values
   save();
