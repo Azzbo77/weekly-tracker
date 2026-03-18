@@ -4,7 +4,7 @@ A lightweight, self-contained monthly status tracker for keeping your manager in
 
 ## What it does
 
-Organises your monthly work into three columns:
+Organises your monthly work into three active columns:
 
 - **In progress** — what you are actively working on right now
 - **Planned** — what you intend to start this month
@@ -15,15 +15,19 @@ As you add tasks throughout the month, a **manager update** is automatically for
 ## Features
 
 - **Five task states** — in progress, planned, blocked, completed, and cancelled
-- **Move tasks between columns** — e.g. move a planned task to blocked if it hits a problem, or unblock a task back to in progress
-- **Notes on tasks** — with bullet point and strikethrough formatting support
-- **Ongoing tasks** — mark a task as ongoing and it automatically carries over to the next month without any manual action
-- **Carry over** — incomplete tasks from previous months can be carried forward in one click
+- **Drag and drop** — reorder tasks within a column or move them between columns
+- **Priority levels** — mark tasks as high, medium, or low priority with colour-coded dots
+- **Progress tracking** — set a percentage complete on any task; reaching 100 % automatically marks it as done
+- **Notes on tasks** — with bullet point, strikethrough formatting, and an inline date picker
+- **Ongoing flag** — mark a task as ongoing to make it easy to identify when carrying tasks forward
+- **Carry over** — incomplete tasks from previous months can be carried forward to the current month in one click
 - **Month navigation** — browse forwards and backwards through any month; each month's data is stored separately
-- **Totals** — item counts for each column shown at a glance
+- **Global search** — search across all months and tasks in one place
+- **Manager update** — auto-generated summary at the bottom of the page; copy to clipboard in one click
+- **PDF export** — export one month, all months, or a custom selection to a formatted PDF
+- **JSON export and import** — download a full backup of your data and restore it on any device
 - **Dark mode** — toggle between light and dark themes; preference is remembered
-- **Export and import** — download a JSON backup of all your data at any time and restore it on any device
-- **Auto-save** — data saves automatically to browser local storage on every change
+- **Auto-save** — every change is saved instantly to browser local storage
 
 ## How to use
 
@@ -32,6 +36,26 @@ Open the tracker in your browser and use the **How to use** button in the top ri
 ## Hosting
 
 This tracker is hosted via GitHub Pages.
+
+## Project structure
+
+```
+index.html        — markup only
+styles.css        — all styles
+js/
+  constants.js    — shared named constants
+  state.js        — shared runtime state
+  utils.js        — formatting helpers and UI utilities
+  storage.js      — localStorage read/write and theme restoration
+  modals.js       — modal wiring and import file handling
+  months.js       — month key helpers, carry-over logic
+  tasks.js        — all item actions (add, remove, prioritise, mark done, etc.)
+  notes.js        — note editor, date picker, note-to-HTML rendering
+  render.js       — DOM rendering and manager update summary
+  export.js       — JSON export/import and PDF generation
+  search.js       — global search, confetti, and drag-and-drop
+  main.js         — bootstrap
+```
 
 ## Running locally
 
@@ -45,7 +69,4 @@ All data is stored locally in your browser's local storage. Nothing is sent to a
 
 ## Saving your data
 
-Data persists in local storage as long as you use the same browser on the same device. For backups or moving to a new machine, use the **Export JSON** button to download your data and **Import JSON** to restore it.
-
-
-GitHub Pages will update within a minute or two. Do a hard refresh in your browser (Ctrl+Shift+R on Windows, Cmd+Shift+R on Mac) if you do not see the changes.
+Data persists in local storage as long as you use the same browser on the same device. For backups or moving to a new device, use the **Export JSON** button to download your data and **Import JSON** to restore it.
