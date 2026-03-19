@@ -1,6 +1,6 @@
 // -- Item actions --
 /**
- * Sorts tasks in a column by priority level (High †’ Medium †’ Low).
+ * Sorts tasks in a column by priority level (High → Medium → Low).
  * Within each priority tier, maintains the existing manual order.
  * @param {Array<Object>} tasks - Array of task objects from a column
  * @returns {Array<Object>} Sorted tasks array (modifies in place and returns)
@@ -219,11 +219,9 @@ function clearSec(sec) {
 function moveItem(fc, i, tc) {
   if (fc === tc) return;
   const w = getOrCreate(currentKey);
-  // Clear any open editor state for the task being moved so it doesn't
-  // end up applied to the wrong index after the splice/push + render.
-  const k = fc + i;
-  delete editing[k];
-  delete editingName[k];
+  // Clear editor state for the moved task and shift indices for tasks below it
+  // in the source column, so no editor ends up applied to the wrong task.
+  shiftEditingKeys(fc, i);
   w[tc].push(w[fc].splice(i, 1)[0]);
   normalizeOrders(w);
   save();

@@ -49,6 +49,9 @@ function doImport() {
       const normKey = `${keyMatch[1]}-${keyMatch[2]}-01`;
 
       const src = data[key];
+      if (!src || typeof src !== 'object' || Array.isArray(src)) {
+        throw new Error(`Invalid data for month "${key}" — expected an object.`);
+      }
       if (!newData[normKey]) newData[normKey] = { doing: [], planned: [], blocked: [], done: [], cancelled: [] };
       const dest = newData[normKey];
       COLS.forEach(col => { if (Array.isArray(src[col])) dest[col].push(...src[col].map(item => structuredClone(item))); });
@@ -127,10 +130,10 @@ function generatePdf() {
   win.focus();
   setTimeout(() => { win.print(); }, TIMING.PDF_PRINT_DIALOG_DELAY);
 }
-// buildPdfHtml €” generates a self-contained HTML document for printing/saving as PDF.
+// buildPdfHtml -- generates a self-contained HTML document for printing/saving as PDF.
 // Opens in a new tab; the browser's native print dialog handles PDF conversion.
-// Keys is an array of ISO week-start dates (YYYY-MM-DD) to include.
-// Theme is 'light' or 'dark' €” colours are defined in PDF_THEMES and applied inline
+// Keys is an array of month keys (YYYY-MM-01 format) to include.
+// Theme is 'light' or 'dark' -- colours are defined in PDF_THEMES and applied inline
 // since external stylesheets are unreliable in print contexts.
 // The @media print block sets -webkit-print-color-adjust:exact so browsers don't
 // strip background colours when saving to PDF (user still needs "Background graphics"
@@ -172,7 +175,7 @@ function buildPdfHtml(keys,theme){
     const total=w.doing.length+w.planned.length+w.blocked.length+w.done.length+w.cancelled.length;
     if(total===0)return'';
 
-    // Build summary text lines €” same logic as the manager update preview
+    // Build summary text lines — same logic as the manager update preview
     const L=[];
     function sec(lbl,items){
       if(!items.length)return;

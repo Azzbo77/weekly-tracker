@@ -214,7 +214,7 @@ function renderNoteHtml(raw, hideCompleted = false) {
 
 /**
  * Transforms raw note text into formatted lines for the manager update summary.
- * Converts bullet points (€¢) to dashes, removes strikethrough, and filters empty lines.
+ * Converts bullet points (•) to dashes, removes strikethrough, and filters empty lines.
  * @param {string} raw - Raw note text containing bullet points and strikethrough formatting
  * @returns {Array<string>} Array of formatted text lines ready for summary display
  */
