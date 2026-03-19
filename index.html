@@ -51,18 +51,18 @@
   <div class="cols">
     <div class="col">
       <div class="col-hd"><div class="col-dot c-do"></div><div><div class="col-title">In progress</div><div class="col-sub">What I'm working on this month</div></div><button class="btn btn-sm" style="margin-left:auto" onclick="sortColumnByPriority('doing')" title="Sort by priority (High → Med → Low)">↕ Priority</button></div>
-      <div class="items" id="list-doing"></div>
       <div class="add-row"><input class="add-in" id="in-doing" placeholder="Add task…" onkeydown="if(event.key==='Enter')addItem('doing')"><button class="add-btn" onclick="addItem('doing')">+</button></div>
+      <div class="items" id="list-doing"></div>
     </div>
     <div class="col">
       <div class="col-hd"><div class="col-dot c-pl"></div><div><div class="col-title">Planned</div><div class="col-sub">Coming up this month</div></div><button class="btn btn-sm" style="margin-left:auto" onclick="sortColumnByPriority('planned')" title="Sort by priority (High → Med → Low)">↕ Priority</button></div>
-      <div class="items" id="list-planned"></div>
       <div class="add-row"><input class="add-in" id="in-planned" placeholder="Add task…" onkeydown="if(event.key==='Enter')addItem('planned')"><button class="add-btn" onclick="addItem('planned')">+</button></div>
+      <div class="items" id="list-planned"></div>
     </div>
     <div class="col">
       <div class="col-hd"><div class="col-dot c-bl"></div><div><div class="col-title">Blocked</div><div class="col-sub">Use notes to explain the blocker</div></div><button class="btn btn-sm" style="margin-left:auto" onclick="sortColumnByPriority('blocked')" title="Sort by priority (High → Med → Low)">↕ Priority</button></div>
-      <div class="items" id="list-blocked"></div>
       <div class="add-row"><input class="add-in" id="in-blocked" placeholder="Add blocker…" onkeydown="if(event.key==='Enter')addItem('blocked')"><button class="add-btn" onclick="addItem('blocked')">+</button></div>
+      <div class="items" id="list-blocked"></div>
     </div>
   </div>
 

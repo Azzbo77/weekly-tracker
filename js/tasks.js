@@ -125,6 +125,7 @@ function markDone(col, i) {
   const w = getOrCreate(currentKey);
   const it = w[col].splice(i, 1)[0];
   shiftEditingKeys(col, i);
+  if (it.progress !== null && it.progress !== undefined) it.progress = 100;
   it.completedFrom = col;
   it.completedDate = new Date().toISOString().slice(0, DATE.ISO_DATE_SLICE);
   w.done.push(it);

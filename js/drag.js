@@ -67,26 +67,27 @@ function drop(e) {
  */
 function setupColumnDropZones() {
   COLS.forEach(col => {
+    const colEl = document.getElementById('list-' + col)?.closest('.col');
     const container = document.getElementById('list-' + col);
-    if (!container) return;
+    if (!container || !colEl) return;
 
-    container.ondragover = e => {
+    const handleDragOver = e => {
       e.preventDefault();
-      container.classList.add('drag-over');
+      colEl.classList.add('col-drag-over');
     };
 
-    container.ondragleave = e => {
-      if (!container.contains(e.relatedTarget)) container.classList.remove('drag-over');
+    const handleDragLeave = e => {
+      if (!colEl.contains(e.relatedTarget)) colEl.classList.remove('col-drag-over');
     };
 
-    container.ondrop = e => {
+    const handleDrop = e => {
+      // Only handle cross-column drops — item-level drop stops propagation for reordering
       e.preventDefault();
-      e.stopPropagation();
-      container.classList.remove('drag-over');
+      colEl.classList.remove('col-drag-over');
       if (!draggedItem) return;
 
       const fromCol = draggedItem.dataset.col;
-      if (fromCol === col) return; // Reordering within same column is handled by item-level drop
+      if (fromCol === col) return;
 
       const w = getOrCreate(currentKey);
       const idx = parseInt(draggedItem.dataset.index, 10);
@@ -100,5 +101,9 @@ function setupColumnDropZones() {
       save();
       render();
     };
+
+    colEl.ondragover = handleDragOver;
+    colEl.ondragleave = handleDragLeave;
+    colEl.ondrop = handleDrop;
   });
 }

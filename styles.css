@@ -128,7 +128,7 @@
   .prog-input:focus{border-color:var(--blue)}
 
   /* add row */
-  .add-row{display:flex;gap:5px;margin-top:8px}
+  .add-row{display:flex;gap:5px;margin-top:8px;margin-bottom:12px}
   .add-in{flex:1;font-size:13px;border:.5px solid var(--border-mid);border-radius:var(--rs);padding:5px 9px;background:var(--surface);color:var(--text);font-family:'DM Sans',sans-serif;outline:none;font-weight:400}
   .add-in:focus{border-color:var(--blue)}
   .add-btn{background:var(--surface2);border:.5px solid var(--border-mid);border-radius:var(--rs);padding:5px 10px;cursor:pointer;font-size:15px;color:var(--text-2);font-weight:400}
@@ -225,6 +225,11 @@
   }
   .item.drag-over {
     border: 2px dashed var(--blue);
+    background: var(--blue-bg);
+  }
+  .col.col-drag-over {
+    outline: 2px dashed var(--blue);
+    outline-offset: -3px;
     background: var(--blue-bg);
   }
   .col .items {
