@@ -238,6 +238,14 @@
     gap: 6px;
   }
 
+  /* move dropdown */
+  .mv-wrap{position:relative;display:inline-block}
+  .mv-menu{display:none;position:absolute;right:0;top:100%;background:var(--surface);border:.5px solid var(--border-mid);border-radius:var(--rs);box-shadow:0 4px 12px rgba(0,0,0,.12);z-index:50;min-width:140px;padding:4px 0}
+  .mv-menu.open{display:block}
+  .mv-opt{display:block;width:100%;background:none;border:none;padding:7px 12px;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--text-2);cursor:pointer;text-align:left;white-space:nowrap;font-weight:400}
+  .mv-opt:hover{background:var(--surface2);color:var(--text)}
+  .mv-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:7px;vertical-align:middle}
+
   /* Priority dots */
   .priority-dot {
     width: 11px;

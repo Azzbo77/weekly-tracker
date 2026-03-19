@@ -1,4 +1,4 @@
-﻿// â”€â”€ Global search â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Global search ─────────────────────────────────────────────────────────────
 let _searchTimer = null;
 function debouncedSearch(val) {
   clearTimeout(_searchTimer);
@@ -8,7 +8,7 @@ function debouncedSearch(val) {
 /**
  * Searches all months and tasks for a matching query string.
  * Searches both task titles and note content (case-insensitive).
- * Displays results in a modal sorted by month.
+ * Displays results in a modal sorted by month (most recent first).
  * @param {string} query - Search term entered by user
  * @returns {void}
  */
@@ -17,14 +17,24 @@ function performGlobalSearch(query) {
     closeModal('search-modal');
     return;
   }
+
+  const STATUS_LABELS = {
+    doing: 'In progress',
+    planned: 'Planned',
+    blocked: 'Blocked',
+    done: 'Completed',
+    cancelled: 'Cancelled'
+  };
+
   const results = [];
-  const STATUS_LABELS = { doing: 'In progress', planned: 'Planned', blocked: 'Blocked', done: 'Completed', cancelled: 'Cancelled' };
+  const q = query.toLowerCase();
+
   Object.keys(weeks).forEach(k => {
     const w = weeks[k];
     [...COLS, 'done', 'cancelled'].forEach(col => {
       (w[col] || []).forEach(it => {
-        if (it.text.toLowerCase().includes(query.toLowerCase()) ||
-            (it.note && it.note.toLowerCase().includes(query.toLowerCase()))) {
+        if (it.text.toLowerCase().includes(q) ||
+            (it.note && it.note.toLowerCase().includes(q))) {
           results.push({ month: k, item: it, monthLabel: getMonthLabelFromKey(k), col });
         }
       });
@@ -32,30 +42,52 @@ function performGlobalSearch(query) {
   });
 
   results.sort((a, b) => b.month.localeCompare(a.month));
+
   const html = results.length === 0
     ? '<div style="color:var(--text-3);font-style:italic;padding:20px;text-align:center">No matches found.</div>'
-    : results.map(r => `
-      <div style="padding:10px;border-bottom:.5px solid var(--border);">
-        <div style="font-size:12px;color:var(--text-3);margin-bottom:4px">${r.monthLabel} &middot; ${STATUS_LABELS[r.col] || r.col}</div>
-        <div style="font-weight:500">${esc(r.item.text)}</div>
-        ${r.item.note ? `<div style="font-size:12px;color:var(--text-2);margin-top:6px">${renderNoteHtml((() => { const s = r.item.note.slice(0,200); return (s.match(/~~/g)||[]).length%2 ? s+'~~' : s; })())}${r.item.note.length>200?'&#x2026;':''}</div>` : ''}
-      </div>
-    `).join('');
+    : results.map(r => {
+        const notePreview = r.item.note
+          ? (() => {
+              // Trim to 200 chars and close any open ~~ to avoid broken strikethrough rendering
+              const s = r.item.note.slice(0, 200);
+              const fixed = (s.match(/~~/g) || []).length % 2 ? s + '~~' : s;
+              return `<div style="font-size:12px;color:var(--text-2);margin-top:6px">${renderNoteHtml(fixed)}${r.item.note.length > 200 ? '&#x2026;' : ''}</div>`;
+            })()
+          : '';
+        return `
+          <div style="padding:10px;border-bottom:.5px solid var(--border);">
+            <div style="font-size:12px;color:var(--text-3);margin-bottom:4px">${r.monthLabel} &middot; ${STATUS_LABELS[r.col] || r.col}</div>
+            <div style="font-weight:500">${esc(r.item.text)}</div>
+            ${notePreview}
+          </div>`;
+      }).join('');
 
   document.getElementById('search-results').innerHTML = html;
   openModal('search-modal');
 }
 
+// ── Confetti ──────────────────────────────────────────────────────────────────
+/**
+ * Launches a short confetti animation on task completion.
+ * Respects the prefers-reduced-motion media query and skips if set.
+ * @returns {void}
+ */
 function launchConfetti() {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
   const canvas = document.createElement('canvas');
   canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999';
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   document.body.appendChild(canvas);
+
   const ctx = canvas.getContext('2d');
-  const colours = ['#1a7a56','#1a5fa8','#b83232','#9a6200','#6b3fa0','#f0b429','#3ecf8e','#5b9cf6','#f07070','#b07ef5'];
-  const particles = Array.from({length: 130}, () => ({
+  const colours = [
+    '#1a7a56', '#1a5fa8', '#b83232', '#9a6200', '#6b3fa0',
+    '#f0b429', '#3ecf8e', '#5b9cf6', '#f07070', '#b07ef5'
+  ];
+
+  const particles = Array.from({ length: 130 }, () => ({
     x: Math.random() * canvas.width,
     y: -10 - Math.random() * 120,
     w: 7 + Math.random() * 7,
@@ -67,11 +99,14 @@ function launchConfetti() {
     tiltV: (Math.random() - 0.5) * 0.18,
     alpha: 1
   }));
+
   const start = performance.now();
+
   function tick(now) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const elapsed = now - start;
     let alive = false;
+
     particles.forEach(p => {
       p.x += p.vx;
       p.y += p.vy;
@@ -89,59 +124,10 @@ function launchConfetti() {
         ctx.restore();
       }
     });
+
     if (alive && elapsed < 4000) requestAnimationFrame(tick);
     else canvas.remove();
   }
+
   requestAnimationFrame(tick);
 }
-
-function dragStart(e) {
-  draggedItem = e.currentTarget;
-  e.currentTarget.classList.add('dragging');
-  e.dataTransfer.effectAllowed = 'move';
-  e.dataTransfer.setData('text/plain', ''); // Firefox fix
-}
-
-function dragEnd(e) {
-  e.currentTarget.classList.remove('dragging');
-  document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
-  draggedItem = null;
-}
-
-function dragOver(e) {
-  e.preventDefault();
-  e.dataTransfer.dropEffect = 'move';
-  const item = e.currentTarget;
-  if (item !== draggedItem) item.classList.add('drag-over');
-}
-
-function dragLeave(e) {
-  if (!e.currentTarget.contains(e.relatedTarget)) e.currentTarget.classList.remove('drag-over');
-}
-
-function drop(e) {
-  e.preventDefault();
-  e.stopPropagation(); // Prevent event bubbling to the container drop handler
-  const target = e.currentTarget;
-  target.classList.remove('drag-over');
-
-  if (!draggedItem || draggedItem === target) return;
-
-  const fromCol = draggedItem.dataset.col;
-  const fromIdx = parseInt(draggedItem.dataset.index);
-  const toCol = target.dataset.col;
-  const toIdx = parseInt(target.dataset.index);
-
-  if (isNaN(fromIdx) || isNaN(toIdx)) return;
-
-  const w = getOrCreate(currentKey);
-  if (fromIdx < 0 || fromIdx >= w[fromCol].length) return;
-  const [moved] = w[fromCol].splice(fromIdx, 1);
-  const insertIdx = (fromCol === toCol && toIdx > fromIdx) ? toIdx - 1 : toIdx;
-  w[toCol].splice(insertIdx, 0, moved);
-
-  normalizeOrders(w);   // Important: re-assign order values
-  save();
-  render();
-}
-

@@ -126,7 +126,7 @@ function markDone(col, i) {
   const it = w[col].splice(i, 1)[0];
   shiftEditingKeys(col, i);
   it.completedFrom = col;
-  it.completedDate = new Date().toISOString().slice(DATE.ISO_DATE_START, DATE.ISO_DATE_SLICE);
+  it.completedDate = new Date().toISOString().slice(0, DATE.ISO_DATE_SLICE);
   w.done.push(it);
   save();
   render();
@@ -179,6 +179,21 @@ function clearSec(sec) {
     render();
     showToast('Undo successful \u2014 tasks restored.', 'success', null, null, 3000);
   }, TIMING.TOAST_DEFAULT_DURATION);
+}
+
+function moveItem(fc, i, tc) {
+  if (fc === tc) return;
+  const w = getOrCreate(currentKey);
+  w[tc].push(w[fc].splice(i, 1)[0]);
+  normalizeOrders(w);
+  save();
+  render();
+}
+
+function toggleMoveMenu(e, id) {
+  e.stopPropagation();
+  document.querySelectorAll('.mv-menu.open').forEach(m => { if (m.id !== id) m.classList.remove('open'); });
+  document.getElementById(id).classList.toggle('open');
 }
 
 function toggleOngoing(col, i) {

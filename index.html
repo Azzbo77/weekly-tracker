@@ -45,7 +45,7 @@
   </div>
 
   <div class="hint-row">
-    <span class="hint">&#10003; complete &nbsp;&#10007; cancel &nbsp;&#9671; ongoing &nbsp;&#9998; note &nbsp;● click dot for priority</span>
+    <span class="hint">&#10003; complete &nbsp;&#10007; cancel &nbsp;&#9671; ongoing (label only) &nbsp;&#9998; note &nbsp;● priority &nbsp;drag to reorder</span>
   </div>
 
   <div class="cols">
@@ -212,7 +212,7 @@
         <div class="h-ic">Export PDF / JSON</div>
         <div class="h-ds">Export the current month as a nicely formatted PDF or all your data as JSON.</div>
         <div class="h-ic">Import JSON</div>
-        <div class="h-ds">Restore data from a previous export (old weekly data is automatically converted).</div>
+        <div class="h-ds">Restore data from a previously exported monthly tracker JSON file.</div>
         <div class="h-ic">☀︎ / ☾</div>
         <div class="h-ds">Toggle between light and dark mode.</div>
       </div>
@@ -237,7 +237,7 @@
 <div class="modal-bg" id="import-modal" role="dialog" aria-modal="true" aria-labelledby="import-modal-title">
   <div class="modal">
     <div class="modal-title" id="import-modal-title">Import JSON</div>
-    <div class="modal-sub">Upload or paste a previously exported JSON file to restore your data. This will overwrite your current data.</div>
+    <div class="modal-sub">Upload or paste a previously exported monthly tracker JSON file to restore your data. This will overwrite your current data.</div>
     <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
       <input type="file" id="import-file" accept=".json,application/json" style="display:none" />
       <button class="btn" id="import-upload-btn" type="button">Upload JSON file</button>
@@ -272,6 +272,7 @@
 <script src="js/notes.js"></script>
 <script src="js/render.js"></script>
 <script src="js/export.js"></script>
+<script src="js/drag.js"></script>
 <script src="js/search.js"></script>
 <script src="js/main.js"></script>
 </body>

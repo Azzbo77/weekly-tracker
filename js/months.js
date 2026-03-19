@@ -3,7 +3,7 @@ function monthKey(off) {
   const now = new Date();
   const mon = new Date(now.getFullYear(), now.getMonth() + off, 1);
   const y = mon.getFullYear();
-  const m = String(mon.getMonth() + 1).padStart(DATE.PADSTART_LENGTH, '0');
+  const m = String(mon.getMonth() + 1).padStart(2, '0');
   return `${y}-${m}-01`;
 }
 

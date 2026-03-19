@@ -62,6 +62,13 @@
       ${esc(it.text)}${tags}
     </span>`;
 
+  const mid = `mm-${col}-${i}`;
+  const mopts = COLS.filter(c => c !== col).map(c =>
+    `<button class="mv-opt" onclick="moveItem('${col}',${i},'${c}');event.stopPropagation()">
+      <span class="mv-dot" style="background:${COL_COLORS[c]}"></span>${COL_LABELS[c]}
+    </button>`
+  ).join('');
+
   return `<div class="item i-${col.slice(0, 2)}" 
                ${isEd || isEdName ? '' : 'draggable="true"'}
                data-col="${col}" 
@@ -75,12 +82,16 @@
       <!-- Priority dot -->
       <div class="priority-dot ${it.priority === 'high' ? 'p-high' : it.priority === 'med' ? 'p-med' : 'p-low'}"
            onclick="cyclePriority('${col}', ${i}); event.stopPropagation();" 
-           title="${it.priority === 'high' ? 'Priority: High' : it.priority === 'low' ? 'Priority: Low' : 'Priority: Medium'} \\u2014 click to change"></div>
+           title="${it.priority === 'high' ? 'Priority: High' : it.priority === 'low' ? 'Priority: Low' : 'Priority: Medium'} \u2014 click to change"></div>
 
       ${taskNameHtml}
       <div class="ibtns">
         <button class="ibt tick" title="Mark as complete" onclick="markDone('${col}',${i})">&#10003;</button>
         <button class="ibt xbt" title="Mark as cancelled" onclick="markCancelled('${col}',${i})">&#10007;</button>
+        <div class="mv-wrap">
+          <button class="ibt" title="Move to another column" onclick="toggleMoveMenu(event,'${mid}')">&#8594;</button>
+          <div class="mv-menu" id="${mid}">${mopts}</div>
+        </div>
         <button class="ibt" title="${it.ongoing ? 'Remove ongoing flag' : 'Mark as ongoing'}" 
                 onclick="toggleOngoing('${col}',${i})" style="${it.ongoing ? 'color:var(--purple)' : ''}">
           ${it.ongoing ? '&#9670;' : '&#9671;'}
@@ -129,36 +140,7 @@ function render() {
     el.innerHTML = w[sec].length === 0 ? `<div class="empty">No ${sec} tasks</div>` : w[sec].map((it, i) => renderResolved(sec, it, i)).join('');
   });
   updateSummary(w);
-
-  normalizeOrders(getOrCreate(currentKey));
-
-  // Allow dropping on empty active column containers only (not done/cancelled)
-  COLS.forEach(col => {
-    const container = document.getElementById('list-' + col);
-    if (!container) return;
-    container.ondragover = e => {
-      e.preventDefault();
-      container.classList.add('drag-over');
-    };
-    container.ondragleave = e => { if (!container.contains(e.relatedTarget)) container.classList.remove('drag-over'); };
-    container.ondrop = e => {
-      e.preventDefault();
-      e.stopPropagation();
-      container.classList.remove('drag-over');
-      if (!draggedItem) return;
-      const fromCol = draggedItem.dataset.col;
-      if (fromCol === col) return;
-      const w = getOrCreate(currentKey);
-      const idx = parseInt(draggedItem.dataset.index);
-      if (isNaN(idx) || idx < 0 || idx >= w[fromCol].length) return;
-      const [movedTask] = w[fromCol].splice(idx, 1);
-      if (!movedTask) return;
-      w[col].push(movedTask);
-      normalizeOrders(w);
-      save();
-      render();
-    };
-  });
+  setupColumnDropZones();
 }
 
 /**

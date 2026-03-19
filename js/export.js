@@ -1,4 +1,4 @@
-﻿// â”€â”€ Export / Import â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// â”€â”€ Export / Import â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function exportData() {
   const toExport = {};
   Object.keys(weeks).forEach(k => {
@@ -8,7 +8,7 @@ function exportData() {
   const b = new Blob([JSON.stringify({ months: toExport, monthOffset }, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(b);
-  a.download = 'monthly-tracker-' + new Date().toISOString().slice(DATE.ISO_DATE_START, DATE.ISO_DATE_SLICE) + '.json';
+  a.download = 'monthly-tracker-' + new Date().toISOString().slice(0, DATE.ISO_DATE_SLICE) + '.json';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -16,8 +16,7 @@ function exportData() {
 }
 
 /**
- * Imports and processes exported JSON data, replacing current local storage.
- * Handles migration from weekly to monthly format automatically.
+ * Imports and processes exported monthly JSON data, replacing current local storage.
  * Validates data structure and displays appropriate error/success messages.
  * @returns {void}
  */
@@ -32,24 +31,19 @@ function doImport() {
     if (!raw) throw new Error('No data provided');
 
     const d = JSON.parse(raw);
-    const data = d.months || d.weeks || {};
-    const offset = typeof d.monthOffset === 'number' ? d.monthOffset : 
-                   typeof d.weekOffset === 'number' ? d.weekOffset : 0;
+    const data = d.months;
+    const offset = typeof d.monthOffset === 'number' ? d.monthOffset : 0;
 
-    if (Object.keys(data).length === 0) throw new Error('No valid tracker data found');
+    if (!data || typeof data !== 'object' || Object.keys(data).length === 0) {
+      throw new Error('No valid monthly tracker data found. Make sure you are importing a monthly tracker export.');
+    }
 
-    // Stage new data before touching existing data â€” prevents data loss on error
+    // Stage new data before touching existing data — prevents data loss on error
     const newData = {};
     Object.keys(data).forEach(key => {
-      let mk = key;
-      if (/^\d{4}-\d{2}-\d{2}$/.test(key)) {
-        mk = key.slice(DATE.ISO_DATE_START, DATE.ISO_MONTH_SLICE) + '-01';
-      }
-      if (!newData[mk]) newData[mk] = { doing: [], planned: [], blocked: [], done: [], cancelled: [] };
-
       const src = data[key];
-      const dest = newData[mk];
-
+      if (!newData[key]) newData[key] = { doing: [], planned: [], blocked: [], done: [], cancelled: [] };
+      const dest = newData[key];
       COLS.forEach(col => { if (Array.isArray(src[col])) dest[col].push(...src[col].map(item => structuredClone(item))); });
       if (Array.isArray(src.done)) dest.done.push(...src.done.map(item => structuredClone(item)));
       if (Array.isArray(src.cancelled)) dest.cancelled.push(...src.cancelled.map(item => structuredClone(item)));
@@ -62,7 +56,7 @@ function doImport() {
     save();
     closeModal('import-modal');
     document.getElementById('import-ta').value = '';
-    refresh();
+    init(); // defined in render.js — re-initialises month state and re-renders
     showToast('Data imported successfully.', 'success');
   } catch (e) {
     showToast('Import failed: ' + e.message, 'error');

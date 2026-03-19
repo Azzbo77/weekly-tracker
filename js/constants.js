@@ -1,6 +1,6 @@
-const STORAGE_KEY = 'wt8';
-const STORAGE_THEME = 'wt8_theme';
-const STORAGE_SEC = 'wt8_sec';
+const STORAGE_KEY = 'mt8';
+const STORAGE_THEME = 'mt8_theme';
+const STORAGE_SEC = 'mt8_sec';
 
 const TIMING = {
   TOAST_DEFAULT_DURATION: 10000,
@@ -10,11 +10,7 @@ const TIMING = {
 };
 
 const DATE = {
-  PADSTART_LENGTH: 2,
-  YEAR_SLICE_LENGTH: 2,
-  ISO_DATE_SLICE: 10,
-  ISO_MONTH_SLICE: 7,
-  ISO_DATE_START: 0,
+  ISO_DATE_SLICE: 10,  // 'YYYY-MM-DD'.length — used when slicing ISO strings to date only
 };
 
 const CALENDAR = {
@@ -23,13 +19,14 @@ const CALENDAR = {
 };
 
 const MARKUP = {
-  STRIKETHROUGH_DELIMITER: 2,
-  STRIKETHROUGH_MIN_LENGTH: 4,
-  BULLET_PREFIX_LENGTH: 2,
-  COL_IDENTIFIER_LENGTH: 2,
+  STRIKETHROUGH_DELIMITER: 2,   // length of '~~'
+  STRIKETHROUGH_MIN_LENGTH: 4,  // minimum '~~~~' — delimiter on both sides with no content
 };
 
 const LOCALE = 'en-GB';
+
+const COL_LABELS = { doing: 'In progress', planned: 'Planned', blocked: 'Blocked' };
+const COL_COLORS = { doing: 'var(--green)', planned: 'var(--blue)', blocked: 'var(--red)' };
 
 const PDF_THEMES = {
   light: { BG:'#ffffff',TEXT:'#1a1917',TEXT2:'#6b6860',TEXT3:'#a8a49e',DIVIDER:'#e0ddd8',

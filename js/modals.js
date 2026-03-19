@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('click', e => {
     if (!e.target.closest('.mv-menu') && !e.target.closest('.dp-btn') && !e.target.closest('button.ntb-btn')) {
       closeAllOpenElements();
+      document.querySelectorAll('.mv-menu.open').forEach(m => m.classList.remove('open'));
     }
   });
 });

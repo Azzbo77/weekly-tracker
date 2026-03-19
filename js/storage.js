@@ -21,10 +21,8 @@ function load() {
     const d = JSON.parse(r);
 
     if (d.months && typeof d.months === 'object') Object.assign(weeks, d.months);
-    else if (d.weeks && typeof d.weeks === 'object') Object.assign(weeks, d.weeks);
 
     if (typeof d.monthOffset === 'number') monthOffset = d.monthOffset;
-    else if (typeof d.weekOffset === 'number') monthOffset = d.weekOffset;
   } catch (e) {
     console.warn('Failed to load data from localStorage', e);
   }
