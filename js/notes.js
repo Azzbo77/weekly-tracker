@@ -194,9 +194,14 @@ function renderNoteHtml(raw, hideCompleted = false) {
   const lines = raw.split('\n');
   let html = '', inList = false;
   lines.forEach(line => {
-    // If hideCompleted is true, skip lines that are entirely struck through
-    if (hideCompleted && /^~~.*~~$/.test(line.trim())) {
-      return;
+    // If hideCompleted is true, skip lines that are entirely struck through,
+    // including bullet lines where the bullet content is fully struck through
+    if (hideCompleted) {
+      const trimmed = line.trim();
+      // Plain strikethrough line: ~~text~~
+      if (/^~~.*~~$/.test(trimmed)) return;
+      // Bullet line where the content after the bullet is fully struck through: • ~~text~~
+      if (/^\u2022\s+~~.*~~$/.test(trimmed)) return;
     }
     const escaped = esc(line);
     const fmt = escaped.replace(/~~(.*?)~~/g, '<s>$1</s>');

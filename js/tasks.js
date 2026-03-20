@@ -42,22 +42,23 @@ function normalizeOrders(w) {
   });
 }
 
-// When creating a new task, give it the highest order so it appears at bottom
+// When creating a new task, add it to the top of the column
 function addItem(col) {
   const inp = document.getElementById('in-' + col);
   const v = inp.value.trim();
   if (!v) return;
 
   const w = getOrCreate(currentKey);
-  const maxOrder = w[col].length > 0 ? Math.max(...w[col].map(t => t.order || 0)) : -1;
 
-  w[col].push({
+  // Insert at top — shift all existing orders up by 1 then assign 0 to the new task
+  w[col].forEach(t => { t.order = (t.order || 0) + 1; });
+  w[col].unshift({
     text: v,
     note: '',
     carried: false,
     ongoing: false,
     progress: null,
-    order: maxOrder + 1,
+    order: 0,
     priority: 'med'
   });
 
@@ -132,8 +133,7 @@ function markDone(col, i) {
   w.done.push(it);
   save();
   render();
-  launchConfetti();
-  // Offer an optional completion note -- delayed so confetti renders first
+  // Offer an optional completion note -- delayed slightly to avoid clashing with render
   setTimeout(() => {
     showNoteToast('Add a completion note… (optional)', 'var(--green)', val => {
       it.note = it.note ? it.note + '\n\n[Completed] ' + val : '[Completed] ' + val;

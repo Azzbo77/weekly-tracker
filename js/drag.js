@@ -50,6 +50,8 @@ function drop(e) {
   if (fromIdx < 0 || fromIdx >= w[fromCol].length) return;
 
   const [moved] = w[fromCol].splice(fromIdx, 1);
+  // Clear editor state for the moved item so it doesn't persist at the wrong index
+  shiftEditingKeys(fromCol, fromIdx);
   const insertIdx = (fromCol === toCol && toIdx > fromIdx) ? toIdx - 1 : toIdx;
   w[toCol].splice(insertIdx, 0, moved);
 
@@ -95,6 +97,8 @@ function setupColumnDropZones() {
 
       const [movedTask] = w[fromCol].splice(idx, 1);
       if (!movedTask) return;
+      // Clear editor state for the moved item
+      shiftEditingKeys(fromCol, idx);
 
       w[col].push(movedTask);
       normalizeOrders(w);
