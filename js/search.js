@@ -22,6 +22,7 @@ function goToMonthFromSearch(targetKey) {
   getOrCreate(currentKey);
   document.getElementById('wk-lbl').textContent = getMonthLabel(monthOffset);
   _syncTodayBtn();
+  save();
   checkCarry();
   render();
   closeModal('search-modal');

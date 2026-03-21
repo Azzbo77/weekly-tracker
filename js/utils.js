@@ -70,16 +70,16 @@ function esc(s) {
     .replace(/"/g, '&quot;');
 }
 /**
- * Shows a toast with an embedded text input for capturing an optional note.
- * Used after marking tasks complete or cancelled.
- * The onSave callback receives the trimmed input value when the user confirms.
- * Pressing Enter in the input confirms; Escape or Skip dismisses without saving.
+ * Shows a toast with an embedded text input and optional achievement checkbox
+ * for capturing a completion note and flagging the task as an achievement.
+ * Pressing Enter confirms; Escape or Skip dismisses without saving.
  * Does NOT auto-dismiss — stays until the user explicitly saves or skips.
- * @param {string} label       - Descriptive label shown above the input (e.g. 'Add a completion note…')
- * @param {string} accentColor - CSS colour used for the left border accent (e.g. 'var(--green)')
- * @param {function} onSave    - Called with the note string if the user saves
+ * @param {string}   label       - Label shown above the input
+ * @param {string}   accentColor - CSS colour for the left border accent
+ * @param {function} onSave      - Called with (noteText, isAchievement) on confirm
+ * @param {boolean}  [showAchievement=false] - Whether to show the achievement checkbox
  */
-function showNoteToast(label, accentColor, onSave) {
+function showNoteToast(label, accentColor, onSave, showAchievement = false) {
   // Only clear other note toasts — do not kill action toasts like delete Undo
   document.querySelectorAll('.toast-note').forEach(el => el.remove());
 
@@ -99,6 +99,27 @@ function showNoteToast(label, accentColor, onSave) {
   inp.placeholder = 'Type a note…';
   inp.maxLength = 200;
 
+  // Achievement checkbox — only shown on completion toast, not cancellation
+  let achCheck = null;
+  if (showAchievement) {
+    const achRow = document.createElement('label');
+    achRow.className = 'toast-ach-row';
+    achRow.title = 'Flag this as an achievement for your appraisal report';
+    achCheck = document.createElement('input');
+    achCheck.type = 'checkbox';
+    achCheck.className = 'toast-ach-check';
+    const achLabel = document.createElement('span');
+    achLabel.textContent = 'Mark as achievement';
+    achRow.appendChild(achCheck);
+    achRow.appendChild(achLabel);
+    t.appendChild(labelEl);
+    t.appendChild(inp);
+    t.appendChild(achRow);
+  } else {
+    t.appendChild(labelEl);
+    t.appendChild(inp);
+  }
+
   const saveBtn = document.createElement('button');
   saveBtn.className = 'toast-action-btn toast-action-btn--accent';
   saveBtn.style.cssText = `background:${accentColor};border-color:${accentColor};`;
@@ -112,18 +133,16 @@ function showNoteToast(label, accentColor, onSave) {
   actionsRow.className = 'toast-note-actions';
   actionsRow.appendChild(saveBtn);
   actionsRow.appendChild(skipBtn);
-
-  t.appendChild(labelEl);
-  t.appendChild(inp);
   t.appendChild(actionsRow);
-  document.body.appendChild(t);
 
+  document.body.appendChild(t);
   setTimeout(() => inp.focus(), 50);
 
   const confirm = () => {
     const val = inp.value.trim();
+    const isAch = achCheck ? achCheck.checked : false;
     t.remove();
-    if (val) onSave(val);
+    onSave(val, isAch);
   };
 
   const dismiss = () => t.remove();

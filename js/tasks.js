@@ -139,13 +139,14 @@ function markDone(col, i) {
   w.done.push(it);
   save();
   render();
-  // Offer an optional completion note -- delayed slightly to avoid clashing with render
+  // Offer an optional completion note and achievement flag
   setTimeout(() => {
-    showNoteToast('Add a completion note… (optional)', 'var(--green)', val => {
-      it.note = it.note ? it.note + '\n\n[Completed] ' + val : '[Completed] ' + val;
+    showNoteToast('Add a completion note… (optional)', 'var(--green)', (val, isAch) => {
+      if (val) it.note = it.note ? it.note + '\n\n[Completed] ' + val : '[Completed] ' + val;
+      if (isAch) it.achievement = true;
       save();
       render();
-    });
+    }, true); // true = show achievement checkbox
   }, 400);
 }
 
@@ -178,6 +179,7 @@ function restoreItem(sec, i) {
   delete it.completedDate;
   delete it.cancelledFrom;
   delete it.cancelledDate;
+  delete it.achievement; // achievement is only meaningful on a completed task
   // Strip any completion/cancellation note appended by the note toast.
   // Two cases: note was the entire content (starts with tag),
   // or it was appended after existing content (preceded by \n\n).
@@ -214,7 +216,8 @@ function clearSec(sec) {
   w[sec] = [];
   save();
   render();
-  showToast(`Cleared all ${sec} tasks.`, 'warning', 'Undo', () => {
+  const secLabel = sec === 'done' ? 'completed' : sec;
+  showToast(`Cleared all ${secLabel} tasks.`, 'warning', 'Undo', () => {
     getOrCreate(currentKey)[sec] = snapshot;
     save();
     render();
@@ -340,4 +343,5 @@ function toggleHideCompleted(col, i) {
   save();
   render();
 }
+
 

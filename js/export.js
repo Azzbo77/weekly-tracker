@@ -382,11 +382,12 @@ function buildAccomplishmentsHtml(keys, theme) {
   const colors = theme === 'light' ? PDF_THEMES.light : PDF_THEMES.dark;
   const {BG,TEXT,TEXT2,TEXT3,DIVIDER,TITLE_LINE,GREEN,GREEN_BG,ITEM_BORDER} = colors;
 
-  // Collect all completed tasks across selected months, keeping month label attached
+  // Collect only achievement-flagged completed tasks across selected months
   const allDone = [];
   keys.forEach(k => {
     const w = getOrCreate(k);
     w.done.forEach(it => {
+      if (!it.achievement) return;
       allDone.push({ it, monthLabel: getMonthLabelFromKey(k) });
     });
   });
@@ -414,7 +415,7 @@ function buildAccomplishmentsHtml(keys, theme) {
   });
 
   const taskRows = allDone.length === 0
-    ? `<p style="color:${TEXT3};font-style:italic;margin-top:24px">No completed tasks found in the selected months.</p>`
+    ? `<p style="color:${TEXT3};font-style:italic;margin-top:24px">No achievements found in the selected months — tick "Mark as achievement" when completing a task to flag it here.</p>`
     : allDone.map(({ it, monthLabel }, idx) => {
         const resNote = extractResolutionNote(it.note);
         const days = daysBetween(it.createdDate, it.completedDate);
@@ -493,7 +494,7 @@ function buildAccomplishmentsHtml(keys, theme) {
   </head><body>
   <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;padding-bottom:14px;border-bottom:2px solid ${TITLE_LINE}">
     <div>
-      <div style="font-size:22px;font-weight:600;letter-spacing:-.02em;color:${TEXT}">Accomplishments Report</div>
+      <div style="font-size:22px;font-weight:600;letter-spacing:-.02em;color:${TEXT}">Achievements Report</div>
       <div style="font-size:14px;color:${TEXT2};margin-top:3px;font-weight:500">${rangeLabel}</div>
       <div style="font-size:12px;color:${TEXT3};margin-top:2px">Generated ${generated}</div>
     </div>

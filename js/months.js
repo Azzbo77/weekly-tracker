@@ -92,6 +92,7 @@ function carryOver() {
         const cloned = structuredClone(it);
         cloned.carried = true;
         cloned.order = undefined;
+        delete cloned.achievement; // achievement flag belongs to the completion event, not the task itself
         return cloned;
       });
       cur[col].unshift(...clonedBatch);
