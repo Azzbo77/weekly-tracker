@@ -78,9 +78,6 @@ function setupColumnDropZones() {
       e.preventDefault();
     };
 
-    const handleDragLeave = e => {
-    };
-
     const handleDrop = e => {
       // Only handle cross-column drops -- item-level drop stops propagation for reordering
       e.preventDefault();
@@ -106,7 +103,6 @@ function setupColumnDropZones() {
     };
 
     colEl.ondragover = handleDragOver;
-    colEl.ondragleave = handleDragLeave;
     colEl.ondrop = handleDrop;
   });
 }

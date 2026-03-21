@@ -54,10 +54,7 @@ function exportData() {
     }
   });
 
-  // For a single-month export, save the offset for that month rather than the current view
-  const offsetToSave = (range === 'current') ? monthOffset : monthOffset;
-
-  const b = new Blob([JSON.stringify({ months: toExport, monthOffset: offsetToSave }, null, 2)], { type: 'application/json' });
+  const b = new Blob([JSON.stringify({ months: toExport, monthOffset }, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(b);
   a.download = 'monthly-tracker-' + new Date().toISOString().slice(0, DATE.ISO_DATE_SLICE) + '.json';
@@ -141,10 +138,6 @@ function openPdfExport() {
   document.querySelector(`input[name="pdf-theme"][value="${isDark ? 'dark' : 'light'}"]`).checked = true;
   document.getElementById('pdf-week-picker').style.display = 'none';
   openModal('pdf-modal');
-}
-
-function onPdfTypeChange() {
-  // No UI changes needed — type is read at generate time
 }
 
 function onPdfRangeChange() {
@@ -452,9 +445,10 @@ function buildAccomplishmentsHtml(keys, theme) {
     ? getMonthLabelFromKey(firstKey)
     : `${getMonthLabelFromKey(firstKey)} – ${getMonthLabelFromKey(lastKey)}`;
 
-  // Monthly output bar chart — one bar per selected month
-  const chartKeys = keys.filter(k => getOrCreate(k).done.length > 0 || keys.length <= 1);
-  const barData = keys.map(k => ({ label: getMonthLabelFromKey(k).replace(/\s\(.*\)/, ''), count: getOrCreate(k).done.length }));
+  // Monthly output bar chart — only months with at least one achievement, bars show achievement count
+  const barData = keys
+    .map(k => ({ label: getMonthLabelFromKey(k).replace(/\s\(.*\)/, ''), count: getOrCreate(k).done.filter(t => t.achievement).length }))
+    .filter(d => d.count > 0);
   const maxCount = Math.max(...barData.map(d => d.count), 1);
   const barW = 28, barGap = 8, chartH = 80, labelH = 28;
   const chartW = barData.length * (barW + barGap) - barGap;

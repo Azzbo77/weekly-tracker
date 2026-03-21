@@ -115,18 +115,28 @@ function renderItem(col, it, i) {
 
 function renderResolved(sec, it, i) {
   const isCan = sec === 'cancelled';
-  const noteHtml = it.note ? `<div class="note-view">${renderNoteHtml(it.note)}</div>` : '';
+  // Strip internal resolution tags before displaying the note — they're for data extraction only
+  const displayNote = it.note
+    ? it.note
+        .replace(/\n\n\[Completed\][^]*$/, '')
+        .replace(/\n\n\[Cancelled\][^]*$/, '')
+        .replace(/^\[Completed\][^]*$/, '')
+        .replace(/^\[Cancelled\][^]*$/, '')
+        .trimEnd()
+    : '';
+  const noteHtml = displayNote ? `<div class="note-view">${renderNoteHtml(displayNote)}</div>` : '';
   const tags = it.carried ? `<span class="tag t-car">carried</span>` : '';
   const tc = isCan ? 'can-txt' : 'struck';
   const ct = isCan ? `<span class="tag t-can">cancelled</span>` : '';
   const completedDateHtml = !isCan && it.completedDate ? `<span class="tag t-date" title="Completed on ${it.completedDate}">Completed: ${it.completedDate}</span>` : '';
   const cancelledDateHtml = isCan && it.cancelledDate ? `<span class="tag t-date" title="Cancelled on ${it.cancelledDate}">Cancelled: ${it.cancelledDate}</span>` : '';
   const createdDateHtml = it.createdDate ? `<span class="tag t-created" title="Created on ${it.createdDate}">Created: ${it.createdDate}</span>` : '';
+  const achievementHtml = !isCan && it.achievement ? `<span class="tag t-ach" title="Marked as achievement">achievement</span>` : '';
   const priorityDot = `<div class="priority-dot ${it.priority === 'high' ? 'p-high' : it.priority === 'med' ? 'p-med' : 'p-low'}"></div>`;
   return `<div class="item ${isCan?'i-ca':'i-dn'}">
     <div class="item-top">
       ${priorityDot}
-      <span class="item-txt ${tc}">${esc(it.text)}${tags}${createdDateHtml}${completedDateHtml}${cancelledDateHtml}${ct}</span>
+      <span class="item-txt ${tc}">${esc(it.text)}${tags}${createdDateHtml}${completedDateHtml}${cancelledDateHtml}${achievementHtml}${ct}</span>
       <div class="ibtns">
         <button class="ibt" title="Restore to active" onclick="restoreItem('${sec}',${i})" style="font-size:14px">&#8617;</button>
         <button class="ibt del" title="Remove permanently" onclick="removeResolved('${sec}',${i})">&#x2715;</button>
@@ -163,7 +173,8 @@ function render() {
   ['done','cancelled'].forEach(sec => {
     document.getElementById('cnt-' + sec).textContent = w[sec].length;
     const el = document.getElementById('list-' + sec);
-    el.innerHTML = w[sec].length === 0 ? `<div class="empty">No ${sec} tasks</div>` : w[sec].map((it, i) => renderResolved(sec, it, i)).join('');
+    const secLabel = sec === 'done' ? 'completed' : 'cancelled';
+    el.innerHTML = w[sec].length === 0 ? `<div class="empty">No ${secLabel} tasks</div>` : w[sec].map((it, i) => renderResolved(sec, it, i)).join('');
   });
   updateSummary(w);
   setupColumnDropZones();

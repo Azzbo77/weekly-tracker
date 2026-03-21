@@ -147,7 +147,7 @@ function markDone(col, i) {
       save();
       render();
     }, true); // true = show achievement checkbox
-  }, 400);
+  }, 50);
 }
 
 function markCancelled(col, i) {

@@ -66,15 +66,35 @@ function performGlobalSearch(query) {
 
   results.sort((a, b) => b.month.localeCompare(a.month));
 
+  // Highlight matching term in text — runs on escaped HTML, skips content inside tags
+  function highlight(text, term) {
+    if (!term) return esc(text);
+    const escaped = esc(text);
+    const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return escaped.replace(new RegExp(`(${escapedTerm})(?![^<]*>)`, 'gi'), m =>
+      `<mark style="background:var(--amber-bg);color:var(--amber);border-radius:2px;padding:0 1px">${m}</mark>`
+    );
+  }
+
+  // Same tag-safe highlight but for already-rendered HTML (note previews)
+  function highlightHtml(html, term) {
+    if (!term) return html;
+    const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return html.replace(new RegExp(`(${escapedTerm})(?![^<]*>)`, 'gi'), m =>
+      `<mark style="background:var(--amber-bg);color:var(--amber);border-radius:2px;padding:0 1px">${m}</mark>`
+    );
+  }
+
   const html = results.length === 0
     ? '<div style="color:var(--text-3);font-style:italic;padding:20px;text-align:center">No matches found.</div>'
     : results.map(r => {
         const notePreview = r.item.note
           ? (() => {
-              // Trim to 200 chars and close any open ~~ to avoid broken strikethrough rendering
               const s = r.item.note.slice(0, 200);
               const fixed = (s.match(/~~/g) || []).length % 2 ? s + '~~' : s;
-              return `<div style="font-size:12px;color:var(--text-2);margin-top:6px">${renderNoteHtml(fixed)}${r.item.note.length > 200 ? '&#x2026;' : ''}</div>`;
+              const rendered = renderNoteHtml(fixed);
+              const highlighted = highlightHtml(rendered, query.trim());
+              return `<div style="font-size:12px;color:var(--text-2);margin-top:6px">${highlighted}${r.item.note.length > 200 ? '&#x2026;' : ''}</div>`;
             })()
           : '';
         return `
@@ -86,7 +106,7 @@ function performGlobalSearch(query) {
                 Go to month
               </button>
             </div>
-            <div style="font-weight:500">${esc(r.item.text)}</div>
+            <div style="font-weight:500">${highlight(r.item.text, query.trim())}</div>
             ${notePreview}
           </div>`;
       }).join('');

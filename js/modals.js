@@ -20,7 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('import-file').addEventListener('change', handleImportFileSelect);
   document.querySelectorAll('input[name="pdf-range"]').forEach(r => r.addEventListener('change', onPdfRangeChange));
   document.querySelectorAll('input[name="json-range"]').forEach(r => r.addEventListener('change', onJsonRangeChange));
-  document.querySelectorAll('input[name="pdf-type"]').forEach(r => r.addEventListener('change', onPdfTypeChange));
 
   document.addEventListener('click', e => {
     if (!e.target.closest('.mv-menu') && !e.target.closest('.dp-btn') && !e.target.closest('button.ntb-btn')) {
